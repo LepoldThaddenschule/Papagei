@@ -25,7 +25,6 @@
   --border: rgba(220,200,220,0.5);
 }
 * { margin:0; padding:0; box-sizing:border-box; }
-
 body {
   font-family: 'Nunito', sans-serif;
   background: var(--cream);
@@ -38,352 +37,157 @@ body {
 }
 
 /* ─── HEADER ─── */
-header {
-  text-align: center;
-  padding: 2.5rem 1rem 1rem;
-  position: relative;
-}
-h1 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(1.9rem, 5vw, 3.2rem);
-  font-weight: 300;
-  letter-spacing: 0.04em;
-  color: var(--warm-text);
-}
-h1 em { color: var(--dusty-rose); font-style: italic; }
-.subtitle {
-  font-size: 0.78rem;
-  color: var(--light-text);
-  margin-top: 0.25rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-}
-.header-actions {
-  position: absolute;
-  top: 1.5rem;
-  right: 1.2rem;
-  display: flex;
-  gap: 0.5rem;
-}
+header { text-align:center; padding:2.5rem 1rem 1rem; position:relative; }
+h1 { font-family:'Cormorant Garamond',serif; font-size:clamp(1.9rem,5vw,3.2rem); font-weight:300; letter-spacing:0.04em; }
+h1 em { color:var(--dusty-rose); font-style:italic; }
+.subtitle { font-size:0.78rem; color:var(--light-text); margin-top:0.25rem; letter-spacing:0.14em; text-transform:uppercase; }
+.header-actions { position:absolute; top:1.5rem; right:1.2rem; display:flex; gap:0.5rem; align-items:center; }
 .icon-btn {
-  width: 38px; height: 38px;
-  border-radius: 50%;
-  border: 1.5px solid var(--border);
-  background: var(--card);
-  cursor: pointer;
-  font-size: 1rem;
-  display: flex; align-items: center; justify-content: center;
-  backdrop-filter: blur(8px);
-  transition: all 0.2s;
-  box-shadow: var(--shadow);
+  width:38px; height:38px; border-radius:50%;
+  border:1.5px solid var(--border); background:var(--card);
+  cursor:pointer; font-size:1rem;
+  display:flex; align-items:center; justify-content:center;
+  backdrop-filter:blur(8px); transition:all 0.2s; box-shadow:var(--shadow);
 }
-.icon-btn:hover { background: var(--blush); transform: scale(1.1); }
+.icon-btn:hover { background:var(--blush); transform:scale(1.1); }
+.sync-dot {
+  width:8px; height:8px; border-radius:50%;
+  background:#ccc; transition:background 0.3s;
+  display:inline-block;
+}
+.sync-dot.ok   { background:#7EC878; }
+.sync-dot.busy { background:#F4C96A; animation:pulse-dot 1s infinite; }
+.sync-dot.err  { background:#E88A8A; }
+@keyframes pulse-dot { 0%,100%{opacity:1} 50%{opacity:0.4} }
 
 /* ─── MASCOT ─── */
-.mascot-section {
-  display: flex; flex-direction: column; align-items: center;
-  gap: 0.6rem; padding: 0.5rem 1rem 1rem;
-}
-.mascot-wrap {
-  width: 130px; height: 130px;
-  filter: drop-shadow(0 6px 16px rgba(180,130,165,0.22));
-}
-.mascot-msg {
-  font-size: 0.85rem; color: var(--mid-text);
-  font-style: italic; text-align: center;
-  max-width: 260px; line-height: 1.5;
-}
+.mascot-section { display:flex; flex-direction:column; align-items:center; gap:0.6rem; padding:0.5rem 1rem 1rem; }
+.mascot-wrap { width:130px; height:130px; filter:drop-shadow(0 6px 16px rgba(180,130,165,0.22)); }
+.mascot-msg { font-size:0.85rem; color:var(--mid-text); font-style:italic; text-align:center; max-width:260px; line-height:1.5; }
 
 /* ─── WEEK NAV ─── */
-.week-nav {
-  display: flex; align-items: center;
-  justify-content: center;
-  gap: 0.8rem; padding: 0.5rem 1rem 1.2rem;
-  flex-wrap: wrap;
-}
-.week-badge {
-  background: var(--card); border: 1.5px solid var(--lavender);
-  border-radius: 20px; padding: 0.45rem 1.1rem;
-  font-size: 0.88rem; font-weight: 700;
-  box-shadow: var(--shadow); letter-spacing: 0.02em;
-}
-.btn {
-  padding: 0.55rem 1.3rem;
-  border: none; border-radius: 20px;
-  cursor: pointer; font-family: 'Nunito', sans-serif;
-  font-weight: 700; font-size: 0.82rem;
-  transition: all 0.2s; letter-spacing: 0.02em;
-}
-.btn-primary {
-  background: linear-gradient(135deg, var(--dusty-rose) 0%, var(--soft-purple) 100%);
-  color: white;
-  box-shadow: 0 4px 16px rgba(200,155,200,0.3);
-}
-.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 22px rgba(200,155,200,0.4); }
-.btn-primary:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
-.btn-ghost {
-  background: var(--card); color: var(--mid-text);
-  border: 1.5px solid var(--border);
-}
-.btn-ghost:hover { background: var(--lavender); color: var(--warm-text); }
+.week-nav { display:flex; align-items:center; justify-content:center; gap:0.8rem; padding:0.5rem 1rem 1.2rem; flex-wrap:wrap; }
+.week-badge { background:var(--card); border:1.5px solid var(--lavender); border-radius:20px; padding:0.45rem 1.1rem; font-size:0.88rem; font-weight:700; box-shadow:var(--shadow); }
+.btn { padding:0.55rem 1.3rem; border:none; border-radius:20px; cursor:pointer; font-family:'Nunito',sans-serif; font-weight:700; font-size:0.82rem; transition:all 0.2s; letter-spacing:0.02em; }
+.btn-primary { background:linear-gradient(135deg,var(--dusty-rose) 0%,var(--soft-purple) 100%); color:white; box-shadow:0 4px 16px rgba(200,155,200,0.3); }
+.btn-primary:hover { transform:translateY(-2px); box-shadow:0 6px 22px rgba(200,155,200,0.4); }
+.btn-primary:disabled { opacity:0.55; cursor:not-allowed; transform:none; }
+.btn-ghost { background:var(--card); color:var(--mid-text); border:1.5px solid var(--border); }
+.btn-ghost:hover { background:var(--lavender); color:var(--warm-text); }
 
 /* ─── STATS ─── */
-.stats-row {
-  display: flex; justify-content: center; gap: 0.7rem;
-  padding: 0 1rem 1.4rem; flex-wrap: wrap;
-}
-.stat-pill {
-  background: var(--card); border-radius: 18px;
-  padding: 0.4rem 1rem; font-size: 0.78rem;
-  box-shadow: var(--shadow); border: 1px solid var(--border);
-  display: flex; align-items: center; gap: 0.35rem;
-  color: var(--mid-text);
-}
+.stats-row { display:flex; justify-content:center; gap:0.7rem; padding:0 1rem 1.4rem; flex-wrap:wrap; }
+.stat-pill { background:var(--card); border-radius:18px; padding:0.4rem 1rem; font-size:0.78rem; box-shadow:var(--shadow); border:1px solid var(--border); display:flex; align-items:center; gap:0.35rem; color:var(--mid-text); }
 
 /* ─── DESKTOP GRID ─── */
-.meal-grid {
-  display: none;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 0.7rem;
-  padding: 0 1.5rem 2.5rem;
-  max-width: 1380px;
-  margin: 0 auto;
-}
-@media (min-width: 760px) {
-  .meal-grid { display: grid; }
-  .meal-accordion { display: none !important; }
-}
+.meal-grid { display:none; grid-template-columns:repeat(7,1fr); gap:0.7rem; padding:0 1.5rem 2.5rem; max-width:1380px; margin:0 auto; }
+@media (min-width:760px) { .meal-grid{display:grid;} .meal-accordion{display:none!important;} }
 
-.day-col {
-  background: var(--card);
-  border-radius: 18px; overflow: hidden;
-  box-shadow: var(--shadow);
-  border: 1px solid rgba(255,255,255,0.85);
-  backdrop-filter: blur(10px);
-  transition: transform 0.2s;
-}
-.day-col:hover { transform: translateY(-2px); }
+.day-col { background:var(--card); border-radius:18px; overflow:hidden; box-shadow:var(--shadow); border:1px solid rgba(255,255,255,0.85); backdrop-filter:blur(10px); transition:transform 0.2s; }
+.day-col:hover { transform:translateY(-2px); }
+.day-head { padding:0.7rem 0.5rem; text-align:center; font-weight:800; font-size:0.7rem; letter-spacing:0.07em; text-transform:uppercase; }
+.day-head.montag    { background:var(--blush);   color:#6B4B5A; }
+.day-head.dienstag  { background:var(--peach);   color:#6B5040; }
+.day-head.mittwoch  { background:var(--mint);    color:#3A6040; }
+.day-head.donnerstag { background:var(--lavender); color:#4A3D72; }
+.day-head.freitag   { background:var(--butter);  color:#6B5A30; }
+.day-head.samstag   { background:var(--sky);     color:#2A5878; }
+.day-head.sonntag   { background:#F0D4EA;         color:#6A3060; }
 
-.day-head {
-  padding: 0.7rem 0.5rem;
-  text-align: center; font-weight: 800;
-  font-size: 0.7rem; letter-spacing: 0.07em;
-  text-transform: uppercase;
-}
-.day-head.montag    { background: var(--blush);   color: #6B4B5A; }
-.day-head.dienstag  { background: var(--peach);   color: #6B5040; }
-.day-head.mittwoch  { background: var(--mint);    color: #3A6040; }
-.day-head.donnerstag { background: var(--lavender); color: #4A3D72; }
-.day-head.freitag   { background: var(--butter);  color: #6B5A30; }
-.day-head.samstag   { background: var(--sky);     color: #2A5878; }
-.day-head.sonntag   { background: #F0D4EA;         color: #6A3060; }
+.meal-slot { padding:0.7rem 0.65rem; border-bottom:1px solid rgba(180,150,180,0.09); transition:background 0.2s; }
+.meal-slot:last-child { border-bottom:none; }
+.meal-slot.accepted { background:rgba(184,212,181,0.18); }
+.meal-slot.rejected { background:rgba(232,173,192,0.12); }
+.meal-type { font-size:0.6rem; text-transform:uppercase; letter-spacing:0.09em; color:var(--light-text); margin-bottom:0.28rem; display:flex; align-items:center; gap:0.25rem; }
+.meal-name-text { font-size:0.76rem; font-weight:600; color:var(--warm-text); line-height:1.35; min-height:2.2rem; }
+.meal-name-text.empty { color:var(--light-text); font-weight:400; font-style:italic; }
+.meal-name-text.rejected-txt { text-decoration:line-through; color:var(--light-text); }
+.meal-name-text.accepted-txt { color:#3A6040; }
+.meal-name-text.loading-txt { color:var(--light-text); font-style:italic; }
 
-.meal-slot {
-  padding: 0.7rem 0.65rem;
-  border-bottom: 1px solid rgba(180,150,180,0.09);
-  transition: background 0.2s;
-}
-.meal-slot:last-child { border-bottom: none; }
-.meal-slot.accepted { background: rgba(184,212,181,0.18); }
-.meal-slot.rejected { background: rgba(232,173,192,0.12); }
-
-.meal-type {
-  font-size: 0.6rem; text-transform: uppercase;
-  letter-spacing: 0.09em; color: var(--light-text);
-  margin-bottom: 0.28rem; display: flex; align-items: center; gap: 0.25rem;
-}
-.meal-name-text {
-  font-size: 0.76rem; font-weight: 600;
-  color: var(--warm-text); line-height: 1.35;
-  min-height: 2.2rem;
-}
-.meal-name-text.empty { color: var(--light-text); font-weight: 400; font-style: italic; }
-.meal-name-text.rejected-txt { text-decoration: line-through; color: var(--light-text); }
-.meal-name-text.accepted-txt { color: #3A6040; }
-
-.meal-acts {
-  display: flex; gap: 0.3rem; margin-top: 0.4rem;
-}
+.meal-acts { display:flex; gap:0.28rem; margin-top:0.4rem; flex-wrap:wrap; }
 .mbtn {
-  width: 24px; height: 24px; border-radius: 50%;
-  border: 1.5px solid; background: transparent;
-  cursor: pointer; font-size: 0.65rem;
-  display: flex; align-items: center; justify-content: center;
-  transition: all 0.18s;
+  width:26px; height:26px; border-radius:50%;
+  border:1.5px solid; background:transparent;
+  cursor:pointer; font-size:0.75rem;
+  display:flex; align-items:center; justify-content:center;
+  transition:all 0.18s; line-height:1;
 }
-.mbtn.ok  { border-color: var(--sage); color: #5A8A58; }
-.mbtn.ok:hover, .mbtn.ok.act  { background: var(--sage); color: white; }
-.mbtn.no  { border-color: var(--dusty-rose); color: #B0607A; }
-.mbtn.no:hover, .mbtn.no.act  { background: var(--dusty-rose); color: white; }
+.mbtn.ok    { border-color:var(--sage); color:#5A8A58; }
+.mbtn.ok:hover,.mbtn.ok.act   { background:var(--sage); color:white; border-color:var(--sage); }
+.mbtn.no    { border-color:var(--dusty-rose); color:#B0607A; }
+.mbtn.no:hover,.mbtn.no.act   { background:var(--dusty-rose); color:white; border-color:var(--dusty-rose); }
+.mbtn.redo  { border-color:var(--soft-purple); color:#7A5AAA; }
+.mbtn.redo:hover { background:var(--soft-purple); color:white; }
+.mbtn.redo:disabled { opacity:0.4; cursor:not-allowed; }
+.mbtn.spinning svg { animation:spin 0.8s linear infinite; }
+@keyframes spin { to{transform:rotate(360deg)} }
 
 /* ─── MOBILE ACCORDION ─── */
-.meal-accordion {
-  padding: 0 1rem 2.5rem;
-  display: flex; flex-direction: column; gap: 0.6rem;
-  max-width: 560px; margin: 0 auto;
-}
-.acc-day {
-  background: var(--card);
-  border-radius: 16px; overflow: hidden;
-  box-shadow: var(--shadow);
-  border: 1px solid rgba(255,255,255,0.85);
-}
-.acc-head {
-  display: flex; align-items: center;
-  justify-content: space-between;
-  padding: 0.9rem 1.1rem;
-  cursor: pointer; user-select: none;
-  font-weight: 800; font-size: 0.9rem;
-  letter-spacing: 0.02em;
-  transition: opacity 0.15s;
-}
-.acc-head:hover { opacity: 0.85; }
-.acc-chevron {
-  font-size: 0.75rem; color: var(--light-text);
-  transition: transform 0.3s ease;
-}
-.acc-day.open .acc-chevron { transform: rotate(180deg); }
-.acc-body {
-  max-height: 0; overflow: hidden;
-  transition: max-height 0.38s ease;
-}
-.acc-day.open .acc-body { max-height: 700px; }
-.acc-meal {
-  padding: 0.75rem 1.1rem;
-  border-top: 1px solid rgba(180,150,180,0.1);
-  display: flex; justify-content: space-between; align-items: flex-start;
-  gap: 0.5rem; transition: background 0.2s;
-}
-.acc-meal.accepted { background: rgba(184,212,181,0.18); }
-.acc-meal.rejected { background: rgba(232,173,192,0.12); }
-.acc-meal-info { flex: 1; }
-.acc-meal-info .meal-type { margin-bottom: 0.2rem; }
-.acc-meal-acts { display: flex; gap: 0.35rem; padding-top: 0.15rem; }
+.meal-accordion { padding:0 1rem 2.5rem; display:flex; flex-direction:column; gap:0.6rem; max-width:560px; margin:0 auto; }
+.acc-day { background:var(--card); border-radius:16px; overflow:hidden; box-shadow:var(--shadow); border:1px solid rgba(255,255,255,0.85); }
+.acc-head { display:flex; align-items:center; justify-content:space-between; padding:0.9rem 1.1rem; cursor:pointer; user-select:none; font-weight:800; font-size:0.9rem; transition:opacity 0.15s; }
+.acc-head:hover { opacity:0.85; }
+.acc-chevron { font-size:0.75rem; color:var(--light-text); transition:transform 0.3s ease; }
+.acc-day.open .acc-chevron { transform:rotate(180deg); }
+.acc-body { max-height:0; overflow:hidden; transition:max-height 0.38s ease; }
+.acc-day.open .acc-body { max-height:800px; }
+.acc-meal { padding:0.75rem 1.1rem; border-top:1px solid rgba(180,150,180,0.1); display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem; transition:background 0.2s; }
+.acc-meal.accepted { background:rgba(184,212,181,0.18); }
+.acc-meal.rejected { background:rgba(232,173,192,0.12); }
+.acc-meal-info { flex:1; }
+.acc-meal-acts { display:flex; gap:0.35rem; padding-top:0.1rem; flex-wrap:wrap; }
 
 /* ─── MODAL ─── */
-.overlay {
-  position: fixed; inset: 0;
-  background: rgba(90,70,90,0.28);
-  backdrop-filter: blur(5px);
-  z-index: 100; display: none;
-  align-items: center; justify-content: center;
-  padding: 1rem;
-}
-.overlay.open { display: flex; }
-.modal {
-  background: var(--cream);
-  border-radius: 24px; padding: 2rem;
-  max-width: 420px; width: 100%;
-  box-shadow: 0 24px 60px rgba(90,60,90,0.18);
-  border: 1px solid rgba(255,255,255,0.9);
-}
-.modal h2 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.55rem; font-weight: 400;
-  margin-bottom: 0.3rem; color: var(--warm-text);
-}
-.modal p.modal-sub {
-  font-size: 0.78rem; color: var(--light-text);
-  margin-bottom: 1.3rem; line-height: 1.5;
-}
-.form-group { margin-bottom: 1rem; }
-.form-group label {
-  display: block; font-size: 0.72rem; font-weight: 800;
-  color: var(--light-text); margin-bottom: 0.4rem;
-  text-transform: uppercase; letter-spacing: 0.08em;
-}
-.form-group input, .form-group textarea {
-  width: 100%; padding: 0.65rem 0.9rem;
-  border: 1.5px solid var(--border); border-radius: 12px;
-  background: white; font-family: 'Nunito', sans-serif;
-  font-size: 0.88rem; color: var(--warm-text); outline: none;
-  transition: border-color 0.2s; resize: vertical;
-}
-.form-group input:focus, .form-group textarea:focus {
-  border-color: var(--soft-purple);
-}
-.modal-actions {
-  display: flex; gap: 0.7rem; justify-content: flex-end; margin-top: 1.4rem;
-}
+.overlay { position:fixed; inset:0; background:rgba(90,70,90,0.28); backdrop-filter:blur(5px); z-index:100; display:none; align-items:center; justify-content:center; padding:1rem; }
+.overlay.open { display:flex; }
+.modal { background:var(--cream); border-radius:24px; padding:1.8rem; max-width:460px; width:100%; box-shadow:0 24px 60px rgba(90,60,90,0.18); border:1px solid rgba(255,255,255,0.9); max-height:90vh; overflow-y:auto; }
+.modal h2 { font-family:'Cormorant Garamond',serif; font-size:1.55rem; font-weight:400; margin-bottom:0.3rem; }
+.modal-sub { font-size:0.78rem; color:var(--light-text); margin-bottom:1.3rem; line-height:1.5; }
+.form-section { margin-bottom:1.2rem; }
+.form-section-title { font-size:0.7rem; font-weight:800; text-transform:uppercase; letter-spacing:0.1em; color:var(--light-text); margin-bottom:0.7rem; padding-bottom:0.4rem; border-bottom:1px solid var(--border); }
+.form-group { margin-bottom:0.9rem; }
+.form-group label { display:block; font-size:0.72rem; font-weight:800; color:var(--light-text); margin-bottom:0.4rem; text-transform:uppercase; letter-spacing:0.08em; }
+.form-group input,.form-group textarea { width:100%; padding:0.65rem 0.9rem; border:1.5px solid var(--border); border-radius:12px; background:white; font-family:'Nunito',sans-serif; font-size:0.88rem; color:var(--warm-text); outline:none; transition:border-color 0.2s; resize:vertical; }
+.form-group input:focus,.form-group textarea:focus { border-color:var(--soft-purple); }
+.hint-box { background:rgba(229,222,255,0.35); border:1px solid var(--lavender); border-radius:12px; padding:0.7rem 0.9rem; font-size:0.75rem; color:var(--mid-text); line-height:1.6; margin-bottom:0.9rem; }
+.hint-box a { color:var(--soft-purple); font-weight:700; }
+.modal-actions { display:flex; gap:0.7rem; justify-content:flex-end; margin-top:1.4rem; }
 
-/* ─── LOADING ─── */
-.loading-veil {
-  position: fixed; inset: 0;
-  background: rgba(253,248,244,0.88);
-  backdrop-filter: blur(5px);
-  z-index: 200; display: none;
-  align-items: center; justify-content: center;
-  flex-direction: column; gap: 1.2rem;
-}
-.loading-veil.on { display: flex; }
-.dots { display: flex; gap: 0.5rem; }
-.dots span {
-  width: 10px; height: 10px; border-radius: 50%;
-  animation: dotbounce 1.3s infinite;
-}
-.dots span:nth-child(1) { background: var(--dusty-rose); }
-.dots span:nth-child(2) { background: var(--soft-purple); animation-delay: 0.18s; }
-.dots span:nth-child(3) { background: var(--sage); animation-delay: 0.36s; }
-@keyframes dotbounce {
-  0%,80%,100% { transform: scale(0.75); opacity: 0.5; }
-  40% { transform: scale(1.25); opacity: 1; }
-}
-.loading-lbl { color: var(--mid-text); font-size: 0.88rem; font-style: italic; }
+/* ─── LOADING VEIL ─── */
+.loading-veil { position:fixed; inset:0; background:rgba(253,248,244,0.88); backdrop-filter:blur(5px); z-index:200; display:none; align-items:center; justify-content:center; flex-direction:column; gap:1.2rem; }
+.loading-veil.on { display:flex; }
+.dots { display:flex; gap:0.5rem; }
+.dots span { width:10px; height:10px; border-radius:50%; animation:dotbounce 1.3s infinite; }
+.dots span:nth-child(1){background:var(--dusty-rose);}
+.dots span:nth-child(2){background:var(--soft-purple);animation-delay:0.18s;}
+.dots span:nth-child(3){background:var(--sage);animation-delay:0.36s;}
+@keyframes dotbounce{0%,80%,100%{transform:scale(0.75);opacity:0.5}40%{transform:scale(1.25);opacity:1}}
+.loading-lbl { color:var(--mid-text); font-size:0.88rem; font-style:italic; }
 
 /* ─── TOAST ─── */
-.toast {
-  position: fixed; bottom: 2rem; left: 50%;
-  transform: translateX(-50%) translateY(80px);
-  background: var(--warm-text); color: white;
-  padding: 0.65rem 1.4rem; border-radius: 20px;
-  font-size: 0.82rem; z-index: 300;
-  transition: transform 0.3s ease; white-space: nowrap;
-  pointer-events: none;
-}
-.toast.show { transform: translateX(-50%) translateY(0); }
+.toast { position:fixed; bottom:2rem; left:50%; transform:translateX(-50%) translateY(80px); background:var(--warm-text); color:white; padding:0.65rem 1.4rem; border-radius:20px; font-size:0.82rem; z-index:300; transition:transform 0.3s ease; white-space:nowrap; pointer-events:none; }
+.toast.show { transform:translateX(-50%) translateY(0); }
 
 /* ─── MASCOT ANIMATIONS ─── */
-@keyframes float {
-  0%,100% { transform: translateY(0px); }
-  50%      { transform: translateY(-9px); }
-}
-@keyframes wink {
-  0%,80%,100% { transform: scaleY(1); }
-  87%, 93%    { transform: scaleY(0.07); }
-}
-@keyframes blush-pulse {
-  0%,100% { opacity: 0.45; }
-  50%     { opacity: 0.7; }
-}
-.mascot-g { animation: float 3.2s ease-in-out infinite; }
-.eye-wink {
-  animation: wink 5s ease-in-out infinite;
-  transform-box: fill-box; transform-origin: center;
-}
-.blush { animation: blush-pulse 2.5s ease-in-out infinite; }
+@keyframes float{0%,100%{transform:translateY(0px)}50%{transform:translateY(-9px)}}
+@keyframes wink{0%,80%,100%{transform:scaleY(1)}87%,93%{transform:scaleY(0.07)}}
+@keyframes blush{0%,100%{opacity:0.45}50%{opacity:0.7}}
+.mascot-g{animation:float 3.2s ease-in-out infinite;}
+.eye-wink{animation:wink 5s ease-in-out infinite;transform-box:fill-box;transform-origin:center;}
+.blush{animation:blush 2.5s ease-in-out infinite;}
 
-/* ─── PREFERENCE LIST ─── */
-.pref-section {
-  max-width: 700px; margin: 0 auto;
-  padding: 0 1.2rem 0.5rem;
-}
-.pref-chips { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.5rem; }
-.chip {
-  font-size: 0.72rem; padding: 0.25rem 0.7rem;
-  border-radius: 12px; font-weight: 600;
-}
-.chip.like { background: var(--mint); color: #3A6040; }
-.chip.dislike { background: var(--blush); color: #8A3050; }
-.pref-toggle {
-  font-size: 0.78rem; color: var(--soft-purple);
-  cursor: pointer; font-weight: 700; text-decoration: underline;
-  text-underline-offset: 2px; background: none; border: none;
-}
-.pref-title {
-  font-size: 0.72rem; text-transform: uppercase;
-  letter-spacing: 0.1em; color: var(--light-text); font-weight: 800;
-}
-.pref-row { display: flex; align-items: baseline; gap: 0.6rem; margin-bottom: 0.35rem; }
+/* ─── PREF PANEL ─── */
+.pref-section { max-width:700px; margin:0 auto; padding:0 1.2rem 1rem; }
+.pref-inner { background:var(--card); border-radius:18px; padding:1.1rem 1.3rem; box-shadow:var(--shadow); border:1px solid var(--border); }
+.pref-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:0.8rem; }
+.pref-title-big { font-family:'Cormorant Garamond',serif; font-size:1.1rem; }
+.pref-toggle { font-size:0.78rem; color:var(--soft-purple); cursor:pointer; font-weight:700; text-decoration:underline; text-underline-offset:2px; background:none; border:none; }
+.pref-label { font-size:0.72rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--light-text); font-weight:800; margin:0.7rem 0 0.35rem; }
+.chips { display:flex; flex-wrap:wrap; gap:0.4rem; }
+.chip { font-size:0.72rem; padding:0.25rem 0.7rem; border-radius:12px; font-weight:600; }
+.chip.like    { background:var(--mint); color:#3A6040; }
+.chip.dislike { background:var(--blush); color:#8A3050; }
 </style>
 </head>
 <body>
@@ -393,7 +197,9 @@ h1 em { color: var(--dusty-rose); font-style: italic; }
   <h1>Mein <em>Wochenspeiseplan</em></h1>
   <p class="subtitle">Gesund · Lecker · Ausgewogen</p>
   <div class="header-actions">
-    <button class="icon-btn" id="prefBtn" title="Vorlieben anzeigen">🌿</button>
+    <span class="sync-dot" id="syncDot" title="Sync-Status"></span>
+    <button class="icon-btn" id="syncBtn" title="Jetzt synchronisieren">☁️</button>
+    <button class="icon-btn" id="prefBtn" title="Vorlieben">🌿</button>
     <button class="icon-btn" id="settingsBtn" title="Einstellungen">⚙️</button>
   </div>
 </header>
@@ -407,43 +213,35 @@ h1 em { color: var(--dusty-rose); font-style: italic; }
 <!-- WEEK NAV -->
 <div class="week-nav">
   <button class="btn btn-ghost" id="prevWeekBtn">‹ Zurück</button>
-  <span class="week-badge" id="weekLabel">Woche wird geladen…</span>
+  <span class="week-badge" id="weekLabel">…</span>
   <button class="btn btn-ghost" id="nextWeekBtn">Weiter ›</button>
   <button class="btn btn-primary" id="generateBtn">✨ KI-Speiseplan</button>
 </div>
 
 <!-- STATS -->
 <div class="stats-row">
-  <div class="stat-pill">🌱 <span id="likedCount">0</span> gemocht</div>
-  <div class="stat-pill">🚫 <span id="dislikedCount">0</span> abgelehnt</div>
+  <div class="stat-pill">👍 <span id="likedCount">0</span> gemocht</div>
+  <div class="stat-pill">👎 <span id="dislikedCount">0</span> abgelehnt</div>
   <div class="stat-pill">✅ <span id="acceptedCount">0</span> akzeptiert</div>
 </div>
 
 <!-- DESKTOP GRID -->
-<div class="meal-grid" id="mealGrid">
-  <!-- filled by JS -->
-</div>
+<div class="meal-grid" id="mealGrid"></div>
 
 <!-- MOBILE ACCORDION -->
-<div class="meal-accordion" id="mealAccordion">
-  <!-- filled by JS -->
-</div>
+<div class="meal-accordion" id="mealAccordion"></div>
 
 <!-- PREFERENCE PANEL -->
 <div class="pref-section" id="prefPanel" style="display:none;">
-  <div style="background:var(--card);border-radius:18px;padding:1.1rem 1.3rem;box-shadow:var(--shadow);border:1px solid var(--border);">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.8rem;">
-      <span style="font-family:'Cormorant Garamond',serif;font-size:1.1rem;">Meine Vorlieben</span>
+  <div class="pref-inner">
+    <div class="pref-header">
+      <span class="pref-title-big">Meine Vorlieben</span>
       <button class="pref-toggle" id="clearPrefsBtn">alles löschen</button>
     </div>
-    <div class="pref-row">
-      <span class="pref-title">😋 Mag ich</span>
-    </div>
-    <div class="pref-chips" id="likedChips"><em style="font-size:0.78rem;color:var(--light-text)">Noch keine</em></div>
-    <div class="pref-row" style="margin-top:0.9rem;">
-      <span class="pref-title">🚫 Mag ich nicht</span>
-    </div>
-    <div class="pref-chips" id="dislikedChips"><em style="font-size:0.78rem;color:var(--light-text)">Noch keine</em></div>
+    <div class="pref-label">😋 Mag ich</div>
+    <div class="chips" id="likedChips"></div>
+    <div class="pref-label">🚫 Mag ich nicht</div>
+    <div class="chips" id="dislikedChips"></div>
   </div>
 </div>
 
@@ -451,15 +249,35 @@ h1 em { color: var(--dusty-rose); font-style: italic; }
 <div class="overlay" id="settingsOverlay">
   <div class="modal">
     <h2>Einstellungen ⚙️</h2>
-    <p class="modal-sub">Dein Claude API-Key wird nur lokal in deinem Browser gespeichert und niemals übertragen.</p>
-    <div class="form-group">
-      <label>Claude API-Key</label>
-      <input type="password" id="apiKeyInput" placeholder="sk-ant-…" autocomplete="off">
+    <p class="modal-sub">Alle Daten werden sicher in deinem Browser und optional in der Cloud gespeichert.</p>
+
+    <div class="form-section">
+      <div class="form-section-title">🤖 Claude KI</div>
+      <div class="form-group">
+        <label>Claude API-Key</label>
+        <input type="password" id="apiKeyInput" placeholder="sk-ant-…" autocomplete="off">
+      </div>
+      <div class="form-group">
+        <label>Persönliche Hinweise (optional)</label>
+        <textarea id="notesInput" rows="2" placeholder="z.B. vegetarisch, keine Nüsse…"></textarea>
+      </div>
     </div>
-    <div class="form-group">
-      <label>Persönliche Anmerkungen (optional)</label>
-      <textarea id="notesInput" rows="3" placeholder="z.B. vegetarisch, keine Nüsse, mag kein Fisch…"></textarea>
+
+    <div class="form-section">
+      <div class="form-section-title">☁️ Geräte-Synchronisation (Firebase)</div>
+      <div class="hint-box">
+        Damit alle Geräte (Handy, Tablet, PC) denselben Plan sehen:<br>
+        1. Gehe zu <a href="https://console.firebase.google.com" target="_blank">console.firebase.google.com</a><br>
+        2. Neues Projekt erstellen → <strong>Realtime Database</strong> anlegen<br>
+        3. Regeln setzen: <code>{ "rules": { ".read": true, ".write": true } }</code><br>
+        4. Die Datenbank-URL hier einfügen (endet auf <em>.firebaseio.com</em>)
+      </div>
+      <div class="form-group">
+        <label>Firebase Datenbank-URL</label>
+        <input type="url" id="firebaseUrlInput" placeholder="https://mein-plan-default-rtdb.firebaseio.com">
+      </div>
     </div>
+
     <div class="modal-actions">
       <button class="btn btn-ghost" id="closeSettings">Abbrechen</button>
       <button class="btn btn-primary" id="saveSettings">Speichern</button>
@@ -469,7 +287,6 @@ h1 em { color: var(--dusty-rose); font-style: italic; }
 
 <!-- LOADING VEIL -->
 <div class="loading-veil" id="loadingVeil">
-  <div id="loadingMascotMini" style="width:60px;height:60px;"></div>
   <div class="dots"><span></span><span></span><span></span></div>
   <p class="loading-lbl" id="loadingLbl">Claude denkt nach…</p>
 </div>
@@ -478,290 +295,136 @@ h1 em { color: var(--dusty-rose); font-style: italic; }
 <div class="toast" id="toast"></div>
 
 <script>
-// ═══════════════════════════════════════════════════════════════════
-// MASCOTS – 7 kawaii SVG animals
-// ═══════════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════
+// MASCOTS
+// ═══════════════════════════════════════════════════════════
 const MASCOTS = [
-  // 0 – Cat (blush pink)
-  {
-    name: 'Kätzchen',
-    messages: [
-      'Miau! Ich hab heute schon ans Frühstück gedacht! 🐾',
-      'Diese Woche machen wir das zusammen, ich glaube an dich! 💕',
-      'Psst… Haferbrei ist eigentlich lecker, ehrlich! 🌸'
-    ],
-    svg: `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-<g class="mascot-g">
-  <ellipse cx="100" cy="118" rx="74" ry="70" fill="#FFD1DC"/>
-  <path d="M42,72 L24,26 L76,60 Z" fill="#FFD1DC"/>
-  <path d="M158,72 L176,26 L124,60 Z" fill="#FFD1DC"/>
-  <path d="M46,68 L34,36 L72,58 Z" fill="#F4A6BC"/>
-  <path d="M154,68 L166,36 L128,58 Z" fill="#F4A6BC"/>
-  <ellipse cx="75" cy="108" rx="13" ry="15" fill="#3D2A3A"/>
-  <g class="eye-wink" style="transform-origin:125px 108px">
-    <ellipse cx="125" cy="108" rx="13" ry="15" fill="#3D2A3A"/>
-  </g>
-  <circle cx="80" cy="102" r="4.5" fill="white"/>
-  <circle cx="130" cy="102" r="4.5" fill="white"/>
-  <ellipse cx="100" cy="126" rx="6" ry="5" fill="#F4A6BC"/>
-  <path d="M88,133 Q100,143 112,133" fill="none" stroke="#3D2A3A" stroke-width="2.5" stroke-linecap="round"/>
-  <line x1="16" y1="120" x2="84" y2="126" stroke="#3D2A3A" stroke-width="1.4" opacity="0.3"/>
-  <line x1="16" y1="130" x2="84" y2="131" stroke="#3D2A3A" stroke-width="1.4" opacity="0.3"/>
-  <line x1="184" y1="120" x2="116" y2="126" stroke="#3D2A3A" stroke-width="1.4" opacity="0.3"/>
-  <line x1="184" y1="130" x2="116" y2="131" stroke="#3D2A3A" stroke-width="1.4" opacity="0.3"/>
-  <ellipse class="blush" cx="64" cy="133" rx="16" ry="9" fill="#F4A6BC" opacity="0.45"/>
-  <ellipse class="blush" cx="136" cy="133" rx="16" ry="9" fill="#F4A6BC" opacity="0.45"/>
-  <ellipse cx="100" cy="182" rx="48" ry="22" fill="#FFD1DC"/>
-  <ellipse cx="100" cy="182" rx="30" ry="14" fill="#FFE8EE"/>
-</g></svg>`
-  },
-  // 1 – Bunny (lavender)
-  {
-    name: 'Häschen',
-    messages: [
-      'Hoppla! Ich bin dein Begleiter diese Woche! 🐇',
-      'Karotten sind toll, aber auch Salat ist super! 🥗',
-      'Hop hop, wir schaffen das! 💜'
-    ],
-    svg: `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-<g class="mascot-g">
-  <ellipse cx="100" cy="122" rx="70" ry="66" fill="#DDD0F5"/>
-  <ellipse cx="68" cy="48" rx="18" ry="40" fill="#DDD0F5"/>
-  <ellipse cx="132" cy="48" rx="18" ry="40" fill="#DDD0F5"/>
-  <ellipse cx="68" cy="46" rx="10" ry="32" fill="#C8B0E8"/>
-  <ellipse cx="132" cy="46" rx="10" ry="32" fill="#C8B0E8"/>
-  <ellipse cx="75" cy="112" rx="13" ry="15" fill="#3D2A4D"/>
-  <g class="eye-wink" style="transform-origin:125px 112px">
-    <ellipse cx="125" cy="112" rx="13" ry="15" fill="#3D2A4D"/>
-  </g>
-  <circle cx="80" cy="106" r="4.5" fill="white"/>
-  <circle cx="130" cy="106" r="4.5" fill="white"/>
-  <ellipse cx="100" cy="130" rx="7" ry="5" fill="#C8B0E8"/>
-  <path d="M90,137 Q100,147 110,137" fill="none" stroke="#3D2A4D" stroke-width="2.5" stroke-linecap="round"/>
-  <ellipse class="blush" cx="66" cy="136" rx="14" ry="8" fill="#C8B0E8" opacity="0.5"/>
-  <ellipse class="blush" cx="134" cy="136" rx="14" ry="8" fill="#C8B0E8" opacity="0.5"/>
-  <ellipse cx="100" cy="184" rx="46" ry="20" fill="#DDD0F5"/>
-  <ellipse cx="100" cy="184" rx="28" ry="13" fill="#EDE6FF"/>
-</g></svg>`
-  },
-  // 2 – Bear (peach/cream)
-  {
-    name: 'Bärchen',
-    messages: [
-      'Brumm! Diese Woche essen wir gesund! 🍯',
-      'Ich mag Beeren. Du auch? 🫐',
-      'Zusammen sind wir stark, Honigkind! 🐻'
-    ],
-    svg: `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-<g class="mascot-g">
-  <ellipse cx="100" cy="118" rx="74" ry="70" fill="#FDDCB8"/>
-  <circle cx="52" cy="58" r="26" fill="#FDDCB8"/>
-  <circle cx="148" cy="58" r="26" fill="#FDDCB8"/>
-  <circle cx="52" cy="60" r="16" fill="#F4BC90"/>
-  <circle cx="148" cy="60" r="16" fill="#F4BC90"/>
-  <ellipse cx="100" cy="134" rx="32" ry="24" fill="#F4BC90"/>
-  <ellipse cx="75" cy="110" rx="13" ry="15" fill="#3D2A1A"/>
-  <g class="eye-wink" style="transform-origin:125px 110px">
-    <ellipse cx="125" cy="110" rx="13" ry="15" fill="#3D2A1A"/>
-  </g>
-  <circle cx="80" cy="104" r="4.5" fill="white"/>
-  <circle cx="130" cy="104" r="4.5" fill="white"/>
-  <ellipse cx="100" cy="128" rx="8" ry="6" fill="#D4906A"/>
-  <path d="M88,138 Q100,150 112,138" fill="none" stroke="#3D2A1A" stroke-width="2.5" stroke-linecap="round"/>
-  <ellipse class="blush" cx="65" cy="132" rx="15" ry="8" fill="#F4907A" opacity="0.4"/>
-  <ellipse class="blush" cx="135" cy="132" rx="15" ry="8" fill="#F4907A" opacity="0.4"/>
-  <ellipse cx="100" cy="184" rx="48" ry="20" fill="#FDDCB8"/>
-</g></svg>`
-  },
-  // 3 – Fox (pastel orange)
-  {
-    name: 'Füchslein',
-    messages: [
-      'Schlau essen, schlau bleiben! Das ist mein Motto 🦊',
-      'Ein bisschen Abenteuer im Teller ist gut! 🍂',
-      'Diese Woche probieren wir etwas Neues? 🌟'
-    ],
-    svg: `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-<g class="mascot-g">
-  <ellipse cx="100" cy="118" rx="72" ry="68" fill="#FBBF8A"/>
-  <path d="M40,70 L10,20 L68,64 Z" fill="#FBBF8A"/>
-  <path d="M160,70 L190,20 L132,64 Z" fill="#FBBF8A"/>
-  <path d="M44,66 L22,30 L66,60 Z" fill="#FDDCB8"/>
-  <path d="M156,66 L178,30 L134,60 Z" fill="#FDDCB8"/>
-  <ellipse cx="100" cy="130" rx="38" ry="30" fill="#FDDCB8"/>
-  <ellipse cx="75" cy="108" rx="13" ry="15" fill="#3D2A1A"/>
-  <g class="eye-wink" style="transform-origin:125px 108px">
-    <ellipse cx="125" cy="108" rx="13" ry="15" fill="#3D2A1A"/>
-  </g>
-  <circle cx="80" cy="102" r="4.5" fill="white"/>
-  <circle cx="130" cy="102" r="4.5" fill="white"/>
-  <ellipse cx="100" cy="126" rx="7" ry="5" fill="#E8907A"/>
-  <path d="M88,135 Q100,145 112,135" fill="none" stroke="#3D2A1A" stroke-width="2.5" stroke-linecap="round"/>
-  <ellipse class="blush" cx="66" cy="130" rx="14" ry="8" fill="#F4B080" opacity="0.5"/>
-  <ellipse class="blush" cx="134" cy="130" rx="14" ry="8" fill="#F4B080" opacity="0.5"/>
-  <ellipse cx="100" cy="184" rx="46" ry="20" fill="#FBBF8A"/>
-</g></svg>`
-  },
-  // 4 – Frog (mint green)
-  {
-    name: 'Fröschchen',
-    messages: [
-      'Quak! Grünes Gemüse ist mein Lieblingsessen! 🐸',
-      'Sprung! Diese Woche schaffen wir unsere Ziele! 💚',
-      'Grün ist nicht nur meine Farbe, sondern auch super gesund! 🥦'
-    ],
-    svg: `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-<g class="mascot-g">
-  <ellipse cx="100" cy="122" rx="72" ry="66" fill="#A8D8A8"/>
-  <circle cx="60" cy="68" r="28" fill="#A8D8A8"/>
-  <circle cx="140" cy="68" r="28" fill="#A8D8A8"/>
-  <ellipse cx="60" cy="70" rx="16" ry="18" fill="#3D2A1A"/>
-  <ellipse cx="140" cy="70" rx="16" ry="18" fill="#3D2A1A"/>
-  <circle cx="55" cy="65" r="5" fill="white"/>
-  <circle cx="135" cy="65" r="5" fill="white"/>
-  <ellipse cx="75" cy="118" rx="14" ry="12" fill="#78C878" opacity="0.6"/>
-  <ellipse cx="125" cy="118" rx="14" ry="12" fill="#78C878" opacity="0.6"/>
-  <ellipse cx="100" cy="128" rx="8" ry="6" fill="#78C878"/>
-  <path d="M85,138 Q100,150 115,138" fill="none" stroke="#3D5A3D" stroke-width="3" stroke-linecap="round"/>
-  <ellipse class="blush" cx="66" cy="136" rx="14" ry="8" fill="#78C898" opacity="0.5"/>
-  <ellipse class="blush" cx="134" cy="136" rx="14" ry="8" fill="#78C898" opacity="0.5"/>
-  <ellipse cx="100" cy="184" rx="46" ry="20" fill="#A8D8A8"/>
-</g></svg>`
-  },
-  // 5 – Duck (soft yellow)
-  {
-    name: 'Entchen',
-    messages: [
-      'Quack quack! Wasser trinken nicht vergessen! 💧',
-      'Hallo! Ich schwimme diese Woche mit dir durch den Speiseplan! 🐥',
-      'Ein bisschen Sonne und gutes Essen – das ist alles! ☀️'
-    ],
-    svg: `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-<g class="mascot-g">
-  <ellipse cx="100" cy="122" rx="72" ry="66" fill="#FFF0A0"/>
-  <ellipse cx="100" cy="84" rx="46" ry="42" fill="#FFF0A0"/>
-  <path d="M140,100 Q170,95 168,115 Q148,118 140,108 Z" fill="#FFCC60"/>
-  <ellipse cx="75" cy="112" rx="13" ry="15" fill="#3D3010"/>
-  <g class="eye-wink" style="transform-origin:125px 112px">
-    <ellipse cx="125" cy="112" rx="13" ry="15" fill="#3D3010"/>
-  </g>
-  <circle cx="80" cy="106" r="4.5" fill="white"/>
-  <circle cx="130" cy="106" r="4.5" fill="white"/>
-  <path d="M88,132 Q100,142 112,132" fill="none" stroke="#3D3010" stroke-width="2.5" stroke-linecap="round"/>
-  <ellipse class="blush" cx="66" cy="130" rx="14" ry="8" fill="#FFCC60" opacity="0.55"/>
-  <ellipse class="blush" cx="134" cy="130" rx="14" ry="8" fill="#FFCC60" opacity="0.55"/>
-  <ellipse cx="100" cy="184" rx="48" ry="20" fill="#FFF0A0"/>
-  <ellipse cx="100" cy="184" rx="30" ry="13" fill="#FFFACC"/>
-</g></svg>`
-  },
-  // 6 – Panda (soft grey/white)
-  {
-    name: 'Pandabär',
-    messages: [
-      'Ich esse zwar Bambus, aber dein Plan klingt leckerer! 🐼',
-      'Gesund und glücklich – das ist unser Ziel! 🖤🤍',
-      'Kleine Schritte, große Erfolge! Zusammen schaffen wir das! 🌿'
-    ],
-    svg: `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-<g class="mascot-g">
-  <ellipse cx="100" cy="118" rx="74" ry="70" fill="#F0F0F0"/>
-  <circle cx="50" cy="64" r="28" fill="#A0A0A0"/>
-  <circle cx="150" cy="64" r="28" fill="#A0A0A0"/>
-  <ellipse cx="66" cy="108" rx="22" ry="20" fill="#A0A0A0"/>
-  <ellipse cx="134" cy="108" rx="22" ry="20" fill="#A0A0A0"/>
-  <ellipse cx="75" cy="108" rx="13" ry="15" fill="#2A2A2A"/>
-  <g class="eye-wink" style="transform-origin:125px 108px">
-    <ellipse cx="125" cy="108" rx="13" ry="15" fill="#2A2A2A"/>
-  </g>
-  <circle cx="80" cy="102" r="4.5" fill="white"/>
-  <circle cx="130" cy="102" r="4.5" fill="white"/>
-  <ellipse cx="100" cy="126" rx="8" ry="6" fill="#C0C0C0"/>
-  <path d="M88,136 Q100,148 112,136" fill="none" stroke="#2A2A2A" stroke-width="2.5" stroke-linecap="round"/>
-  <ellipse class="blush" cx="66" cy="130" rx="14" ry="8" fill="#F0A0C0" opacity="0.45"/>
-  <ellipse class="blush" cx="134" cy="130" rx="14" ry="8" fill="#F0A0C0" opacity="0.45"/>
-  <ellipse cx="100" cy="184" rx="48" ry="20" fill="#F0F0F0"/>
-</g></svg>`
-  }
+  { name:'Kätzchen', msg:['Miau! Diese Woche kochen wir gesund! 🐾','Ich glaube an dich! Ein guter Plan macht alles einfacher 💕','Psst… Haferbrei ist eigentlich lecker! 🌸'], svg:`<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><g class="mascot-g"><ellipse cx="100" cy="118" rx="74" ry="70" fill="#FFD1DC"/><path d="M42,72 L24,26 L76,60 Z" fill="#FFD1DC"/><path d="M158,72 L176,26 L124,60 Z" fill="#FFD1DC"/><path d="M46,68 L34,36 L72,58 Z" fill="#F4A6BC"/><path d="M154,68 L166,36 L128,58 Z" fill="#F4A6BC"/><ellipse cx="75" cy="108" rx="13" ry="15" fill="#3D2A3A"/><g class="eye-wink" style="transform-origin:125px 108px"><ellipse cx="125" cy="108" rx="13" ry="15" fill="#3D2A3A"/></g><circle cx="80" cy="102" r="4.5" fill="white"/><circle cx="130" cy="102" r="4.5" fill="white"/><ellipse cx="100" cy="126" rx="6" ry="5" fill="#F4A6BC"/><path d="M88,133 Q100,143 112,133" fill="none" stroke="#3D2A3A" stroke-width="2.5" stroke-linecap="round"/><line x1="16" y1="120" x2="84" y2="126" stroke="#3D2A3A" stroke-width="1.4" opacity="0.3"/><line x1="16" y1="130" x2="84" y2="131" stroke="#3D2A3A" stroke-width="1.4" opacity="0.3"/><line x1="184" y1="120" x2="116" y2="126" stroke="#3D2A3A" stroke-width="1.4" opacity="0.3"/><line x1="184" y1="130" x2="116" y2="131" stroke="#3D2A3A" stroke-width="1.4" opacity="0.3"/><ellipse class="blush" cx="64" cy="133" rx="16" ry="9" fill="#F4A6BC" opacity="0.45"/><ellipse class="blush" cx="136" cy="133" rx="16" ry="9" fill="#F4A6BC" opacity="0.45"/><ellipse cx="100" cy="182" rx="48" ry="22" fill="#FFD1DC"/><ellipse cx="100" cy="182" rx="30" ry="14" fill="#FFE8EE"/></g></svg>` },
+  { name:'Häschen', msg:['Hoppla! Diese Woche essen wir bunt und gesund! 🐇','Karotten sind toll – aber auch Salat! 🥗','Hop hop, wir schaffen das! 💜'], svg:`<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><g class="mascot-g"><ellipse cx="100" cy="122" rx="70" ry="66" fill="#DDD0F5"/><ellipse cx="68" cy="48" rx="18" ry="40" fill="#DDD0F5"/><ellipse cx="132" cy="48" rx="18" ry="40" fill="#DDD0F5"/><ellipse cx="68" cy="46" rx="10" ry="32" fill="#C8B0E8"/><ellipse cx="132" cy="46" rx="10" ry="32" fill="#C8B0E8"/><ellipse cx="75" cy="112" rx="13" ry="15" fill="#3D2A4D"/><g class="eye-wink" style="transform-origin:125px 112px"><ellipse cx="125" cy="112" rx="13" ry="15" fill="#3D2A4D"/></g><circle cx="80" cy="106" r="4.5" fill="white"/><circle cx="130" cy="106" r="4.5" fill="white"/><ellipse cx="100" cy="130" rx="7" ry="5" fill="#C8B0E8"/><path d="M90,137 Q100,147 110,137" fill="none" stroke="#3D2A4D" stroke-width="2.5" stroke-linecap="round"/><ellipse class="blush" cx="66" cy="136" rx="14" ry="8" fill="#C8B0E8" opacity="0.5"/><ellipse class="blush" cx="134" cy="136" rx="14" ry="8" fill="#C8B0E8" opacity="0.5"/><ellipse cx="100" cy="184" rx="46" ry="20" fill="#DDD0F5"/><ellipse cx="100" cy="184" rx="28" ry="13" fill="#EDE6FF"/></g></svg>` },
+  { name:'Bärchen', msg:['Brumm! Diese Woche essen wir gesund! 🍯','Ich mag Beeren. Du auch? 🫐','Zusammen sind wir stark! 🐻'], svg:`<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><g class="mascot-g"><ellipse cx="100" cy="118" rx="74" ry="70" fill="#FDDCB8"/><circle cx="52" cy="58" r="26" fill="#FDDCB8"/><circle cx="148" cy="58" r="26" fill="#FDDCB8"/><circle cx="52" cy="60" r="16" fill="#F4BC90"/><circle cx="148" cy="60" r="16" fill="#F4BC90"/><ellipse cx="100" cy="134" rx="32" ry="24" fill="#F4BC90"/><ellipse cx="75" cy="110" rx="13" ry="15" fill="#3D2A1A"/><g class="eye-wink" style="transform-origin:125px 110px"><ellipse cx="125" cy="110" rx="13" ry="15" fill="#3D2A1A"/></g><circle cx="80" cy="104" r="4.5" fill="white"/><circle cx="130" cy="104" r="4.5" fill="white"/><ellipse cx="100" cy="128" rx="8" ry="6" fill="#D4906A"/><path d="M88,138 Q100,150 112,138" fill="none" stroke="#3D2A1A" stroke-width="2.5" stroke-linecap="round"/><ellipse class="blush" cx="65" cy="132" rx="15" ry="8" fill="#F4907A" opacity="0.4"/><ellipse class="blush" cx="135" cy="132" rx="15" ry="8" fill="#F4907A" opacity="0.4"/><ellipse cx="100" cy="184" rx="48" ry="20" fill="#FDDCB8"/></g></svg>` },
+  { name:'Füchslein', msg:['Schlau essen, schlau bleiben! 🦊','Ein bisschen Abenteuer im Teller ist gut! 🍂','Diese Woche probieren wir etwas Neues? 🌟'], svg:`<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><g class="mascot-g"><ellipse cx="100" cy="118" rx="72" ry="68" fill="#FBBF8A"/><path d="M40,70 L10,20 L68,64 Z" fill="#FBBF8A"/><path d="M160,70 L190,20 L132,64 Z" fill="#FBBF8A"/><path d="M44,66 L22,30 L66,60 Z" fill="#FDDCB8"/><path d="M156,66 L178,30 L134,60 Z" fill="#FDDCB8"/><ellipse cx="100" cy="130" rx="38" ry="30" fill="#FDDCB8"/><ellipse cx="75" cy="108" rx="13" ry="15" fill="#3D2A1A"/><g class="eye-wink" style="transform-origin:125px 108px"><ellipse cx="125" cy="108" rx="13" ry="15" fill="#3D2A1A"/></g><circle cx="80" cy="102" r="4.5" fill="white"/><circle cx="130" cy="102" r="4.5" fill="white"/><ellipse cx="100" cy="126" rx="7" ry="5" fill="#E8907A"/><path d="M88,135 Q100,145 112,135" fill="none" stroke="#3D2A1A" stroke-width="2.5" stroke-linecap="round"/><ellipse class="blush" cx="66" cy="130" rx="14" ry="8" fill="#F4B080" opacity="0.5"/><ellipse class="blush" cx="134" cy="130" rx="14" ry="8" fill="#F4B080" opacity="0.5"/><ellipse cx="100" cy="184" rx="46" ry="20" fill="#FBBF8A"/></g></svg>` },
+  { name:'Fröschchen', msg:['Quak! Grünes Gemüse ist mein Lieblingsessen! 🐸','Sprung! Diese Woche schaffen wir unsere Ziele! 💚','Grün ist nicht nur meine Farbe, sondern auch super gesund! 🥦'], svg:`<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><g class="mascot-g"><ellipse cx="100" cy="122" rx="72" ry="66" fill="#A8D8A8"/><circle cx="60" cy="68" r="28" fill="#A8D8A8"/><circle cx="140" cy="68" r="28" fill="#A8D8A8"/><ellipse cx="60" cy="70" rx="16" ry="18" fill="#3D2A1A"/><ellipse cx="140" cy="70" rx="16" ry="18" fill="#3D2A1A"/><circle cx="55" cy="65" r="5" fill="white"/><circle cx="135" cy="65" r="5" fill="white"/><ellipse cx="100" cy="128" rx="8" ry="6" fill="#78C878"/><path d="M85,138 Q100,150 115,138" fill="none" stroke="#3D5A3D" stroke-width="3" stroke-linecap="round"/><ellipse class="blush" cx="66" cy="136" rx="14" ry="8" fill="#78C898" opacity="0.5"/><ellipse class="blush" cx="134" cy="136" rx="14" ry="8" fill="#78C898" opacity="0.5"/><ellipse cx="100" cy="184" rx="46" ry="20" fill="#A8D8A8"/></g></svg>` },
+  { name:'Entchen',  msg:['Quack! Wasser trinken nicht vergessen! 💧','Ich schwimme diese Woche mit dir durch den Speiseplan! 🐥','Sonne und gutes Essen – das ist alles! ☀️'], svg:`<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><g class="mascot-g"><ellipse cx="100" cy="122" rx="72" ry="66" fill="#FFF0A0"/><ellipse cx="100" cy="84" rx="46" ry="42" fill="#FFF0A0"/><path d="M140,100 Q170,95 168,115 Q148,118 140,108 Z" fill="#FFCC60"/><ellipse cx="75" cy="112" rx="13" ry="15" fill="#3D3010"/><g class="eye-wink" style="transform-origin:125px 112px"><ellipse cx="125" cy="112" rx="13" ry="15" fill="#3D3010"/></g><circle cx="80" cy="106" r="4.5" fill="white"/><circle cx="130" cy="106" r="4.5" fill="white"/><path d="M88,132 Q100,142 112,132" fill="none" stroke="#3D3010" stroke-width="2.5" stroke-linecap="round"/><ellipse class="blush" cx="66" cy="130" rx="14" ry="8" fill="#FFCC60" opacity="0.55"/><ellipse class="blush" cx="134" cy="130" rx="14" ry="8" fill="#FFCC60" opacity="0.55"/><ellipse cx="100" cy="184" rx="48" ry="20" fill="#FFF0A0"/><ellipse cx="100" cy="184" rx="30" ry="13" fill="#FFFACC"/></g></svg>` },
+  { name:'Pandabär', msg:['Gesund und glücklich – das ist unser Ziel! 🐼','Kleine Schritte, große Erfolge! 🖤🤍','Ich esse zwar Bambus, aber dein Plan klingt leckerer! 🌿'], svg:`<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><g class="mascot-g"><ellipse cx="100" cy="118" rx="74" ry="70" fill="#F0F0F0"/><circle cx="50" cy="64" r="28" fill="#A0A0A0"/><circle cx="150" cy="64" r="28" fill="#A0A0A0"/><ellipse cx="66" cy="108" rx="22" ry="20" fill="#A0A0A0"/><ellipse cx="134" cy="108" rx="22" ry="20" fill="#A0A0A0"/><ellipse cx="75" cy="108" rx="13" ry="15" fill="#2A2A2A"/><g class="eye-wink" style="transform-origin:125px 108px"><ellipse cx="125" cy="108" rx="13" ry="15" fill="#2A2A2A"/></g><circle cx="80" cy="102" r="4.5" fill="white"/><circle cx="130" cy="102" r="4.5" fill="white"/><ellipse cx="100" cy="126" rx="8" ry="6" fill="#C0C0C0"/><path d="M88,136 Q100,148 112,136" fill="none" stroke="#2A2A2A" stroke-width="2.5" stroke-linecap="round"/><ellipse class="blush" cx="66" cy="130" rx="14" ry="8" fill="#F0A0C0" opacity="0.45"/><ellipse class="blush" cx="134" cy="130" rx="14" ry="8" fill="#F0A0C0" opacity="0.45"/><ellipse cx="100" cy="184" rx="48" ry="20" fill="#F0F0F0"/></g></svg>` }
 ];
 
-const DAYS = ['montag','dienstag','mittwoch','donnerstag','freitag','samstag','sonntag'];
-const DAY_LABELS = ['Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag','Sonntag'];
-const MEALS = ['fruehstueck','mittagessen','abendessen'];
+const DAYS        = ['montag','dienstag','mittwoch','donnerstag','freitag','samstag','sonntag'];
+const DAY_LABELS  = ['Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag','Sonntag'];
+const MEALS       = ['fruehstueck','mittagessen','abendessen'];
 const MEAL_LABELS = ['🌅 Frühstück','☀️ Mittagessen','🌙 Abendessen'];
-const DAY_COLORS = ['montag','dienstag','mittwoch','donnerstag','freitag','samstag','sonntag'];
+const MEAL_NAMES  = ['Frühstück','Mittagessen','Abendessen'];
+const DAY_COLORS  = ['#F9DDE6','#FDDFC0','#D6EDD8','#E5DEFF','#FAECC7','#C8E8F5','#F0D4EA'];
 
-// ═══════════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════
 // STATE
-// ═══════════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════
 let STATE = {
-  weekKey: '',
-  plan: {},
-  preferences: { liked: [], disliked: [], notes: '' },
-  apiKey: ''
+  weekKey: '', plan: {},
+  preferences: { liked:[], disliked:[], notes:'' },
+  apiKey: '', firebaseUrl: ''
 };
 
 // ─── Week helpers ───
 function getISOWeek(date) {
-  const d = new Date(date);
-  d.setHours(0,0,0,0);
-  d.setDate(d.getDate() + 3 - (d.getDay() + 6) % 7);
-  const week1 = new Date(d.getFullYear(), 0, 4);
-  return 1 + Math.round(((d - week1) / 86400000 - 3 + (week1.getDay() + 6) % 7) / 7);
+  const d = new Date(date); d.setHours(0,0,0,0);
+  d.setDate(d.getDate() + 3 - (d.getDay()+6)%7);
+  const w1 = new Date(d.getFullYear(),0,4);
+  return 1 + Math.round(((d-w1)/86400000 - 3 + (w1.getDay()+6)%7)/7);
 }
 function currentWeekKey() {
-  const now = new Date();
-  return `${now.getFullYear()}-W${String(getISOWeek(now)).padStart(2,'0')}`;
+  const n = new Date();
+  return `${n.getFullYear()}-W${String(getISOWeek(n)).padStart(2,'0')}`;
 }
 function weekKeyLabel(key) {
-  const [yr, wStr] = key.split('-W');
-  const wNum = parseInt(wStr);
-  // get monday of that week
-  const jan1 = new Date(parseInt(yr), 0, 1);
-  const days = (wNum - 1) * 7;
-  const monday = new Date(jan1.getTime() + days * 86400000);
-  monday.setDate(monday.getDate() - (monday.getDay() || 7) + 1);
-  const sunday = new Date(monday); sunday.setDate(monday.getDate() + 6);
-  const fmt = d => d.toLocaleDateString('de-DE', {day:'numeric', month:'short'});
+  const [yr,wStr] = key.split('-W'); const wNum=parseInt(wStr);
+  const jan1=new Date(parseInt(yr),0,1);
+  const monday=new Date(jan1.getTime()+(wNum-1)*7*86400000);
+  monday.setDate(monday.getDate()-((monday.getDay()||7)-1));
+  const sunday=new Date(monday); sunday.setDate(monday.getDate()+6);
+  const fmt=d=>d.toLocaleDateString('de-DE',{day:'numeric',month:'short'});
   return `KW ${wNum} · ${fmt(monday)} – ${fmt(sunday)}`;
 }
-function shiftWeek(key, delta) {
-  const [yr, wStr] = key.split('-W');
-  let wNum = parseInt(wStr); let year = parseInt(yr);
-  wNum += delta;
-  // handle year rollover roughly
-  if (wNum < 1) { year--; wNum = 52; }
-  if (wNum > 52) { year++; wNum = 1; }
-  return `${year}-W${String(wNum).padStart(2,'0')}`;
+function shiftWeek(key,delta) {
+  const [yr,wStr]=key.split('-W'); let w=parseInt(wStr),y=parseInt(yr);
+  w+=delta; if(w<1){y--;w=52;} if(w>52){y++;w=1;}
+  return `${y}-W${String(w).padStart(2,'0')}`;
 }
 
-// ─── Storage ───
-function loadPlan(key) {
-  try { return JSON.parse(localStorage.getItem(`sp_plan_${key}`)) || {}; } catch { return {}; }
-}
-function savePlan(key, plan) {
-  localStorage.setItem(`sp_plan_${key}`, JSON.stringify(plan));
-}
-function loadPrefs() {
-  try { return JSON.parse(localStorage.getItem('sp_prefs')) || { liked:[], disliked:[], notes:'' }; } catch { return { liked:[], disliked:[], notes:'' }; }
-}
-function savePrefs(p) { localStorage.setItem('sp_prefs', JSON.stringify(p)); }
+// ─── Local storage ───
+function loadPlan(key)  { try{return JSON.parse(localStorage.getItem(`sp_plan_${key}`))||{};}catch{return{};} }
+function savePlanLocal(key,plan) { localStorage.setItem(`sp_plan_${key}`,JSON.stringify(plan)); }
+function loadPrefs()    { try{return JSON.parse(localStorage.getItem('sp_prefs'))||{liked:[],disliked:[],notes:''};}catch{return{liked:[],disliked:[],notes:''};} }
+function savePrefsLocal(p){ localStorage.setItem('sp_prefs',JSON.stringify(p)); }
 
-// ─── Mascot ───
-function getMascot(key) {
-  const wNum = parseInt(key.split('-W')[1]) || 1;
-  return MASCOTS[((wNum - 1) % 7 + 7) % 7];
+// ─── Firebase sync ───
+function fbUrl(path) {
+  return `${STATE.firebaseUrl.replace(/\/$/,'')}/${path}.json`;
 }
 
-// ═══════════════════════════════════════════════════════════════════
+async function syncToCloud() {
+  if (!STATE.firebaseUrl) return;
+  setSyncDot('busy');
+  try {
+    // collect all local plans
+    const allPlans = {};
+    for (let i=0; i<localStorage.length; i++) {
+      const k=localStorage.key(i);
+      if (k.startsWith('sp_plan_')) {
+        allPlans[k.replace('sp_plan_','')] = JSON.parse(localStorage.getItem(k));
+      }
+    }
+    await fetch(fbUrl('speiseplan'), {
+      method:'PUT',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({ plans:allPlans, preferences:STATE.preferences, lastSync:new Date().toISOString() })
+    });
+    setSyncDot('ok');
+  } catch(e) { setSyncDot('err'); }
+}
+
+async function syncFromCloud() {
+  if (!STATE.firebaseUrl) return;
+  setSyncDot('busy');
+  try {
+    const res = await fetch(fbUrl('speiseplan'));
+    if (!res.ok) throw new Error('HTTP '+res.status);
+    const data = await res.json();
+    if (!data) { setSyncDot('ok'); return; }
+    if (data.preferences) {
+      STATE.preferences = data.preferences;
+      savePrefsLocal(STATE.preferences);
+    }
+    if (data.plans) {
+      Object.entries(data.plans).forEach(([k,v])=>localStorage.setItem(`sp_plan_${k}`,JSON.stringify(v)));
+      STATE.plan = loadPlan(STATE.weekKey);
+    }
+    renderAll();
+    setSyncDot('ok');
+    showToast('Sync erfolgreich ☁️');
+  } catch(e) { setSyncDot('err'); showToast('Sync fehlgeschlagen – URL prüfen'); }
+}
+
+function setSyncDot(state) {
+  const d=document.getElementById('syncDot');
+  d.className='sync-dot '+(state==='ok'?'ok':state==='busy'?'busy':'err');
+  d.title = state==='ok'?'Synchronisiert':state==='busy'?'Synchronisiert…':'Sync-Fehler';
+}
+
+// ─── Save everything ───
+async function saveAll() {
+  savePlanLocal(STATE.weekKey, STATE.plan);
+  savePrefsLocal(STATE.preferences);
+  await syncToCloud();
+}
+
+// ═══════════════════════════════════════════════════════════
 // RENDER
-// ═══════════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════
 function renderMascot() {
-  const m = getMascot(STATE.weekKey);
-  document.getElementById('mascotSvg').innerHTML = m.svg;
-  const msg = m.messages[Math.floor(Math.random() * m.messages.length)];
-  document.getElementById('mascotMsg').textContent = `Dein Begleiter: ${m.name} · „${msg}"`;
-  // mini mascot in loading
-  document.getElementById('loadingMascotMini').innerHTML = m.svg;
+  const wNum=parseInt(STATE.weekKey.split('-W')[1])||1;
+  const m=MASCOTS[((wNum-1)%7+7)%7];
+  document.getElementById('mascotSvg').innerHTML=m.svg;
+  document.getElementById('mascotMsg').textContent=`${m.name}: „${m.msg[Math.floor(Math.random()*m.msg.length)]}"`;
 }
 
 function renderAll() {
@@ -769,301 +432,263 @@ function renderAll() {
   renderMobile();
   renderStats();
   renderPrefPanel();
-  document.getElementById('weekLabel').textContent = weekKeyLabel(STATE.weekKey);
+  document.getElementById('weekLabel').textContent=weekKeyLabel(STATE.weekKey);
 }
 
-function slotClasses(day, meal) {
-  const s = STATE.plan?.[day]?.[meal]?.status || 'pending';
-  return s === 'pending' ? '' : s;
-}
-
-function mealNameEl(day, meal, isDesktop) {
-  const entry = STATE.plan?.[day]?.[meal];
-  const name = entry?.name || '';
-  const status = entry?.status || 'pending';
-  const cls = ['meal-name-text', !name ? 'empty' : '', status === 'rejected' ? 'rejected-txt' : '', status === 'accepted' ? 'accepted-txt' : ''].filter(Boolean).join(' ');
-  return `<div class="${cls}">${name || '—'}</div>`;
-}
-
-function mealActBtns(day, meal) {
-  const status = STATE.plan?.[day]?.[meal]?.status || 'pending';
-  const hasName = !!STATE.plan?.[day]?.[meal]?.name;
-  if (!hasName) return '';
+function mealBtns(day, meal, isLoading) {
+  if (isLoading) return `<div class="meal-acts"><span style="font-size:0.7rem;color:var(--light-text);font-style:italic">…</span></div>`;
+  const entry=STATE.plan?.[day]?.[meal];
+  if (!entry?.name) return '';
+  const s=entry.status||'pending';
+  const redoIcon=`<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.95"/></svg>`;
   return `<div class="meal-acts">
-    <button class="mbtn ok ${status==='accepted'?'act':''}" onclick="setStatus('${day}','${meal}','accepted')" title="Lecker!">✓</button>
-    <button class="mbtn no ${status==='rejected'?'act':''}" onclick="setStatus('${day}','${meal}','rejected')" title="Nicht so">✗</button>
+    <button class="mbtn ok ${s==='accepted'?'act':''}" onclick="setStatus('${day}','${meal}','accepted')" title="Lecker! 👍">👍</button>
+    <button class="mbtn no ${s==='rejected'?'act':''}" onclick="setStatus('${day}','${meal}','rejected')" title="Nicht so 👎">👎</button>
+    <button class="mbtn redo" onclick="regenMeal('${day}','${meal}')" title="Anderen Vorschlag">${redoIcon}</button>
   </div>`;
 }
 
 function renderDesktop() {
-  const grid = document.getElementById('mealGrid');
-  grid.innerHTML = '';
-  DAYS.forEach((day, di) => {
-    const col = document.createElement('div');
-    col.className = 'day-col';
-    let html = `<div class="day-head ${day}">${DAY_LABELS[di]}</div>`;
-    MEALS.forEach((meal, mi) => {
-      const status = STATE.plan?.[day]?.[meal]?.status || 'pending';
-      html += `<div class="meal-slot ${status!=='pending'?status:''}">
+  const grid=document.getElementById('mealGrid'); grid.innerHTML='';
+  DAYS.forEach((day,di)=>{
+    const col=document.createElement('div'); col.className='day-col';
+    let html=`<div class="day-head ${day}">${DAY_LABELS[di]}</div>`;
+    MEALS.forEach((meal,mi)=>{
+      const entry=STATE.plan?.[day]?.[meal];
+      const s=entry?.status||'pending';
+      const name=entry?.name||'';
+      const loading=entry?.loading;
+      const nameCls=['meal-name-text',!name&&!loading?'empty':'',s==='rejected'&&!loading?'rejected-txt':'',s==='accepted'&&!loading?'accepted-txt':'',loading?'loading-txt':''].filter(Boolean).join(' ');
+      html+=`<div class="meal-slot ${s!=='pending'&&!loading?s:''}" id="slot_${day}_${meal}">
         <div class="meal-type">${MEAL_LABELS[mi]}</div>
-        ${mealNameEl(day, meal, true)}
-        ${mealActBtns(day, meal)}
+        <div class="${nameCls}">${loading?'Neuer Vorschlag…':name||'—'}</div>
+        ${mealBtns(day,meal,loading)}
       </div>`;
     });
-    col.innerHTML = html;
-    grid.appendChild(col);
+    col.innerHTML=html; grid.appendChild(col);
   });
 }
 
 function renderMobile() {
-  const acc = document.getElementById('mealAccordion');
-  acc.innerHTML = '';
-  DAYS.forEach((day, di) => {
-    const div = document.createElement('div');
-    div.className = 'acc-day';
-    div.id = `acc_${day}`;
-    const headColor = ['#F9DDE6','#FDDFC0','#D6EDD8','#E5DEFF','#FAECC7','#C8E8F5','#F0D4EA'][di];
-    let body = '';
-    MEALS.forEach((meal, mi) => {
-      const status = STATE.plan?.[day]?.[meal]?.status || 'pending';
-      const entry = STATE.plan?.[day]?.[meal];
-      const name = entry?.name || '—';
-      const cls = ['meal-name-text', !entry?.name?'empty':'', status==='rejected'?'rejected-txt':'', status==='accepted'?'accepted-txt':''].filter(Boolean).join(' ');
-      body += `<div class="acc-meal ${status!=='pending'?status:''}">
+  const acc=document.getElementById('mealAccordion'); acc.innerHTML='';
+  DAYS.forEach((day,di)=>{
+    const wasOpen=document.getElementById(`acc_${day}`)?.classList.contains('open');
+    const div=document.createElement('div'); div.className='acc-day'+(wasOpen?' open':''); div.id=`acc_${day}`;
+    let body='';
+    MEALS.forEach((meal,mi)=>{
+      const entry=STATE.plan?.[day]?.[meal];
+      const s=entry?.status||'pending';
+      const name=entry?.name||'—';
+      const loading=entry?.loading;
+      const nameCls=['meal-name-text',!entry?.name&&!loading?'empty':'',s==='rejected'&&!loading?'rejected-txt':'',s==='accepted'&&!loading?'accepted-txt':'',loading?'loading-txt':''].filter(Boolean).join(' ');
+      body+=`<div class="acc-meal ${s!=='pending'&&!loading?s:''}" id="accslot_${day}_${meal}">
         <div class="acc-meal-info">
           <div class="meal-type">${MEAL_LABELS[mi]}</div>
-          <div class="${cls}">${name}</div>
+          <div class="${nameCls}">${loading?'Neuer Vorschlag…':name}</div>
         </div>
-        <div class="acc-meal-acts">${entry?.name ? `
-          <button class="mbtn ok ${status==='accepted'?'act':''}" onclick="setStatus('${day}','${meal}','accepted')" title="Lecker!">✓</button>
-          <button class="mbtn no ${status==='rejected'?'act':''}" onclick="setStatus('${day}','${meal}','rejected')" title="Nicht so">✗</button>` : ''}
-        </div>
+        <div class="acc-meal-acts">${mealBtns(day,meal,loading)}</div>
       </div>`;
     });
-    div.innerHTML = `
-      <div class="acc-head" onclick="toggleAcc('${day}')" style="background:${headColor}">
-        <span class="accordion-title">${DAY_LABELS[di]}</span>
-        <span class="acc-chevron">▼</span>
-      </div>
-      <div class="acc-body">${body}</div>`;
+    div.innerHTML=`<div class="acc-head" onclick="toggleAcc('${day}')" style="background:${DAY_COLORS[di]}">
+      <span>${DAY_LABELS[di]}</span><span class="acc-chevron">▼</span>
+    </div><div class="acc-body">${body}</div>`;
     acc.appendChild(div);
   });
 }
 
-function toggleAcc(day) {
-  const el = document.getElementById(`acc_${day}`);
-  el.classList.toggle('open');
-}
+function toggleAcc(day) { document.getElementById(`acc_${day}`)?.classList.toggle('open'); }
 
 function renderStats() {
-  const prefs = STATE.preferences;
-  document.getElementById('likedCount').textContent = prefs.liked.length;
-  document.getElementById('dislikedCount').textContent = prefs.disliked.length;
-  // count accepted in current plan
-  let accepted = 0;
-  DAYS.forEach(d => MEALS.forEach(m => {
-    if (STATE.plan?.[d]?.[m]?.status === 'accepted') accepted++;
-  }));
-  document.getElementById('acceptedCount').textContent = accepted;
+  const p=STATE.preferences;
+  document.getElementById('likedCount').textContent=p.liked.length;
+  document.getElementById('dislikedCount').textContent=p.disliked.length;
+  let acc=0;
+  DAYS.forEach(d=>MEALS.forEach(m=>{ if(STATE.plan?.[d]?.[m]?.status==='accepted')acc++; }));
+  document.getElementById('acceptedCount').textContent=acc;
 }
 
 function renderPrefPanel() {
-  const lc = document.getElementById('likedChips');
-  const dc = document.getElementById('dislikedChips');
-  const liked = STATE.preferences.liked;
-  const disliked = STATE.preferences.disliked;
-  lc.innerHTML = liked.length ? liked.slice(-30).map(m => `<span class="chip like">${m}</span>`).join('') : '<em style="font-size:0.78rem;color:var(--light-text)">Noch keine</em>';
-  dc.innerHTML = disliked.length ? disliked.slice(-30).map(m => `<span class="chip dislike">${m}</span>`).join('') : '<em style="font-size:0.78rem;color:var(--light-text)">Noch keine</em>';
+  const lc=document.getElementById('likedChips'), dc=document.getElementById('dislikedChips');
+  const {liked,disliked}=STATE.preferences;
+  lc.innerHTML=liked.length?liked.slice(-30).map(m=>`<span class="chip like">${m}</span>`).join(''):'<em style="font-size:0.78rem;color:var(--light-text)">Noch keine</em>';
+  dc.innerHTML=disliked.length?disliked.slice(-30).map(m=>`<span class="chip dislike">${m}</span>`).join(''):'<em style="font-size:0.78rem;color:var(--light-text)">Noch keine</em>';
 }
 
-// ─── Meal status ───
-function setStatus(day, meal, status) {
-  if (!STATE.plan[day]) STATE.plan[day] = {};
-  if (!STATE.plan[day][meal]) return;
-  const current = STATE.plan[day][meal].status;
-  const newStatus = current === status ? 'pending' : status;
-  STATE.plan[day][meal].status = newStatus;
-  const mealName = STATE.plan[day][meal].name;
-  if (newStatus === 'accepted') {
-    addLiked(mealName);
-  } else if (newStatus === 'rejected') {
-    addDisliked(mealName);
-  }
-  savePlan(STATE.weekKey, STATE.plan);
-  renderAll();
+// ═══════════════════════════════════════════════════════════
+// MEAL STATUS
+// ═══════════════════════════════════════════════════════════
+function setStatus(day,meal,status) {
+  if(!STATE.plan[day]?.[meal]) return;
+  const cur=STATE.plan[day][meal].status;
+  STATE.plan[day][meal].status = cur===status?'pending':status;
+  const name=STATE.plan[day][meal].name;
+  if(STATE.plan[day][meal].status==='accepted') addLiked(name);
+  else if(STATE.plan[day][meal].status==='rejected') addDisliked(name);
+  renderAll(); saveAll();
 }
 
-function addLiked(name) {
-  const p = STATE.preferences;
-  if (!p.liked.includes(name)) {
-    p.liked.push(name);
-    p.disliked = p.disliked.filter(m => m !== name);
-    savePrefs(p);
+function addLiked(n) {
+  if(!STATE.preferences.liked.includes(n)){
+    STATE.preferences.liked.push(n);
+    STATE.preferences.disliked=STATE.preferences.disliked.filter(m=>m!==n);
   }
 }
-function addDisliked(name) {
-  const p = STATE.preferences;
-  if (!p.disliked.includes(name)) {
-    p.disliked.push(name);
-    p.liked = p.liked.filter(m => m !== name);
-    savePrefs(p);
+function addDisliked(n) {
+  if(!STATE.preferences.disliked.includes(n)){
+    STATE.preferences.disliked.push(n);
+    STATE.preferences.liked=STATE.preferences.liked.filter(m=>m!==n);
   }
 }
 
-// ═══════════════════════════════════════════════════════════════════
-// AI GENERATION
-// ═══════════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════
+// AI – FULL WEEK GENERATION
+// ═══════════════════════════════════════════════════════════
 async function generateMealPlan() {
-  if (!STATE.apiKey) {
-    openSettings();
-    showToast('Bitte zuerst deinen API-Key eingeben 🔑');
-    return;
-  }
-  setLoading(true, 'Claude denkt über deinen Speiseplan nach…');
-  const p = STATE.preferences;
-  const likedStr = p.liked.length ? `\nGerichte, die die Person mochte (öfter in diese Richtung vorschlagen): ${p.liked.slice(-25).join(', ')}` : '';
-  const dislikedStr = p.disliked.length ? `\nGerichte, die die Person NICHT mochte (NIE mehr vorschlagen): ${p.disliked.slice(-25).join(', ')}` : '';
-  const notesStr = p.notes ? `\nPersönliche Hinweise: ${p.notes}` : '';
-  const systemPrompt = `Du bist ein freundlicher Ernährungsberater für jemanden, der abnehmen möchte.
-Erstelle einen ausgewogenen, kalorienreduzierten Wochenspeiseplan auf Deutsch.
-Achte auf Abwechslung, saisonale Zutaten, einfache Zubereitung und gesunde Auswahl.${likedStr}${dislikedStr}${notesStr}
-
-Antworte AUSSCHLIESSLICH mit einem validen JSON-Objekt. Kein Markdown, keine Erklärungen, keine Backticks.
-Format:
+  if(!STATE.apiKey){ openSettings(); showToast('Bitte API-Key eingeben 🔑'); return; }
+  setLoading(true,'Claude erstellt deinen Wochenplan…');
+  const p=STATE.preferences;
+  const sys=`Du bist ein freundlicher Ernährungsberater. Erstelle einen ausgewogenen, kalorienreduzierten Wochenspeiseplan auf Deutsch.
+${p.liked.length?`Gerichte die gemocht wurden (öfter vorschlagen): ${p.liked.slice(-25).join(', ')}`:''}
+${p.disliked.length?`Gerichte die NICHT gemocht wurden (NIE vorschlagen): ${p.disliked.slice(-25).join(', ')}`:''}
+${p.notes?`Persönliche Hinweise: ${p.notes}`:''}
+Antworte AUSSCHLIESSLICH mit einem validen JSON-Objekt ohne Markdown oder Erklärungen.
 {"montag":{"fruehstueck":"...","mittagessen":"...","abendessen":"..."},"dienstag":{"fruehstueck":"...","mittagessen":"...","abendessen":"..."},"mittwoch":{"fruehstueck":"...","mittagessen":"...","abendessen":"..."},"donnerstag":{"fruehstueck":"...","mittagessen":"...","abendessen":"..."},"freitag":{"fruehstueck":"...","mittagessen":"...","abendessen":"..."},"samstag":{"fruehstueck":"...","mittagessen":"...","abendessen":"..."},"sonntag":{"fruehstueck":"...","mittagessen":"...","abendessen":"..."}}`;
-
   try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': STATE.apiKey,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true'
-      },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
-        max_tokens: 1000,
-        system: systemPrompt,
-        messages: [{ role: 'user', content: 'Erstelle meinen Wochenspeiseplan.' }]
-      })
-    });
-    const data = await res.json();
-    if (data.error) throw new Error(data.error.message);
-    let text = data.content?.[0]?.text || '';
-    text = text.replace(/```json|```/g, '').trim();
-    const parsed = JSON.parse(text);
-    STATE.plan = {};
-    DAYS.forEach(day => {
-      STATE.plan[day] = {};
-      MEALS.forEach(meal => {
-        STATE.plan[day][meal] = { name: parsed[day]?.[meal] || '', status: 'pending' };
-      });
-    });
-    savePlan(STATE.weekKey, STATE.plan);
-    renderAll();
-    showToast('Neuer Speiseplan erstellt! Guten Appetit 🌸');
-  } catch (err) {
-    console.error(err);
-    showToast('Fehler: ' + (err.message || 'Bitte API-Key prüfen'));
-  }
+    const res=await claudeApi(sys,'Erstelle meinen Wochenspeiseplan.',1200);
+    let text=res.replace(/```json|```/g,'').trim();
+    const parsed=JSON.parse(text);
+    STATE.plan={};
+    DAYS.forEach(day=>{ STATE.plan[day]={}; MEALS.forEach(meal=>{ STATE.plan[day][meal]={name:parsed[day]?.[meal]||'',status:'pending'}; }); });
+    await saveAll(); renderAll(); showToast('Neuer Speiseplan erstellt! 🌸');
+  } catch(e){ showToast('Fehler: '+(e.message||'API-Key prüfen')); }
   setLoading(false);
 }
 
-// ═══════════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════
+// AI – SINGLE MEAL REGENERATION
+// ═══════════════════════════════════════════════════════════
+async function regenMeal(day, meal) {
+  if(!STATE.apiKey){ showToast('Bitte API-Key in ⚙️ eingeben 🔑'); return; }
+  const mealIdx=MEALS.indexOf(meal);
+  const dayIdx=DAYS.indexOf(day);
+  if(!STATE.plan[day]) STATE.plan[day]={};
+  if(!STATE.plan[day][meal]) STATE.plan[day][meal]={};
+  STATE.plan[day][meal].loading=true;
+  renderAll();
+  const p=STATE.preferences;
+  const sys=`Du bist Ernährungsberater. Antworte NUR mit dem Namen eines einzigen Gerichts. Kein Punkt, keine Erklärung, kein Emoji.
+${p.disliked.length?`NIEMALS vorschlagen: ${p.disliked.join(', ')}`:''}
+${p.liked.length?`In diese Richtung vorschlagen: ${p.liked.join(', ')}`:''}`;
+  const prompt=`Schlage mir ein alternatives ${MEAL_NAMES[mealIdx]} für ${DAY_LABELS[dayIdx]} vor, das zum gesunden Abnehmen geeignet ist. Bisheriger Vorschlag war: "${STATE.plan[day][meal]?.name||'keiner'}" – bitte etwas anderes.`;
+  try {
+    const text=await claudeApi(sys,prompt,80);
+    const name=text.trim().replace(/^["""„]|[""""]$/g,'').trim();
+    STATE.plan[day][meal]={ name, status:'pending', loading:false };
+    await saveAll(); renderAll(); showToast(`Neuer Vorschlag: ${name} ✨`);
+  } catch(e){
+    STATE.plan[day][meal].loading=false;
+    renderAll(); showToast('Fehler beim Vorschlag');
+  }
+}
+
+// ─── Claude API helper ───
+async function claudeApi(system, userMsg, maxTokens) {
+  const res=await fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',
+    headers:{
+      'Content-Type':'application/json',
+      'x-api-key':STATE.apiKey,
+      'anthropic-version':'2023-06-01',
+      'anthropic-dangerous-direct-browser-access':'true'
+    },
+    body:JSON.stringify({ model:'claude-sonnet-4-6', max_tokens:maxTokens, system, messages:[{role:'user',content:userMsg}] })
+  });
+  const data=await res.json();
+  if(data.error) throw new Error(data.error.message);
+  return data.content?.[0]?.text||'';
+}
+
+// ═══════════════════════════════════════════════════════════
 // UI HELPERS
-// ═══════════════════════════════════════════════════════════════════
-function setLoading(on, msg) {
-  document.getElementById('loadingVeil').classList.toggle('on', on);
-  if (msg) document.getElementById('loadingLbl').textContent = msg;
-  document.getElementById('generateBtn').disabled = on;
+// ═══════════════════════════════════════════════════════════
+function setLoading(on,msg) {
+  document.getElementById('loadingVeil').classList.toggle('on',on);
+  if(msg) document.getElementById('loadingLbl').textContent=msg;
+  document.getElementById('generateBtn').disabled=on;
 }
 
 let toastTimer;
 function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => t.classList.remove('show'), 3200);
+  const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show');
+  clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.classList.remove('show'),3200);
 }
 
 function openSettings() {
-  document.getElementById('apiKeyInput').value = STATE.apiKey;
-  document.getElementById('notesInput').value = STATE.preferences.notes;
+  document.getElementById('apiKeyInput').value=STATE.apiKey;
+  document.getElementById('notesInput').value=STATE.preferences.notes;
+  document.getElementById('firebaseUrlInput').value=STATE.firebaseUrl;
   document.getElementById('settingsOverlay').classList.add('open');
 }
 function closeSettings() { document.getElementById('settingsOverlay').classList.remove('open'); }
 
-// ═══════════════════════════════════════════════════════════════════
-// EVENT LISTENERS
-// ═══════════════════════════════════════════════════════════════════
-document.getElementById('settingsBtn').addEventListener('click', openSettings);
-document.getElementById('closeSettings').addEventListener('click', closeSettings);
-document.getElementById('settingsOverlay').addEventListener('click', e => {
-  if (e.target === document.getElementById('settingsOverlay')) closeSettings();
-});
-document.getElementById('saveSettings').addEventListener('click', () => {
-  const key = document.getElementById('apiKeyInput').value.trim();
-  const notes = document.getElementById('notesInput').value.trim();
-  STATE.apiKey = key;
-  STATE.preferences.notes = notes;
-  localStorage.setItem('sp_apikey', key);
-  savePrefs(STATE.preferences);
+// ═══════════════════════════════════════════════════════════
+// EVENTS
+// ═══════════════════════════════════════════════════════════
+document.getElementById('settingsBtn').addEventListener('click',openSettings);
+document.getElementById('closeSettings').addEventListener('click',closeSettings);
+document.getElementById('settingsOverlay').addEventListener('click',e=>{ if(e.target===document.getElementById('settingsOverlay'))closeSettings(); });
+document.getElementById('saveSettings').addEventListener('click',()=>{
+  STATE.apiKey=document.getElementById('apiKeyInput').value.trim();
+  STATE.preferences.notes=document.getElementById('notesInput').value.trim();
+  STATE.firebaseUrl=document.getElementById('firebaseUrlInput').value.trim().replace(/\/$/,'');
+  localStorage.setItem('sp_apikey',STATE.apiKey);
+  localStorage.setItem('sp_fburl',STATE.firebaseUrl);
+  savePrefsLocal(STATE.preferences);
   closeSettings();
-  showToast('Einstellungen gespeichert ✓');
+  showToast('Gespeichert ✓');
+  if(STATE.firebaseUrl) syncFromCloud();
 });
-
-document.getElementById('generateBtn').addEventListener('click', generateMealPlan);
-
-document.getElementById('prevWeekBtn').addEventListener('click', () => {
-  STATE.weekKey = shiftWeek(STATE.weekKey, -1);
-  STATE.plan = loadPlan(STATE.weekKey);
-  renderMascot();
-  renderAll();
+document.getElementById('generateBtn').addEventListener('click',generateMealPlan);
+document.getElementById('prevWeekBtn').addEventListener('click',()=>{
+  STATE.weekKey=shiftWeek(STATE.weekKey,-1);
+  STATE.plan=loadPlan(STATE.weekKey);
+  renderMascot(); renderAll();
 });
-document.getElementById('nextWeekBtn').addEventListener('click', () => {
-  STATE.weekKey = shiftWeek(STATE.weekKey, 1);
-  STATE.plan = loadPlan(STATE.weekKey);
-  renderMascot();
-  renderAll();
+document.getElementById('nextWeekBtn').addEventListener('click',()=>{
+  STATE.weekKey=shiftWeek(STATE.weekKey,1);
+  STATE.plan=loadPlan(STATE.weekKey);
+  renderMascot(); renderAll();
 });
-
-document.getElementById('prefBtn').addEventListener('click', () => {
-  const panel = document.getElementById('prefPanel');
-  panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
-  if (panel.style.display === 'block') renderPrefPanel();
+document.getElementById('syncBtn').addEventListener('click',()=>syncFromCloud());
+document.getElementById('prefBtn').addEventListener('click',()=>{
+  const p=document.getElementById('prefPanel');
+  p.style.display=p.style.display==='none'?'block':'none';
+  if(p.style.display==='block') renderPrefPanel();
 });
-document.getElementById('clearPrefsBtn').addEventListener('click', () => {
-  if (confirm('Alle Vorlieben wirklich löschen?')) {
-    STATE.preferences = { liked: [], disliked: [], notes: STATE.preferences.notes };
-    savePrefs(STATE.preferences);
-    renderAll();
-    showToast('Vorlieben gelöscht 🌱');
+document.getElementById('clearPrefsBtn').addEventListener('click',()=>{
+  if(confirm('Alle Vorlieben wirklich löschen?')){
+    STATE.preferences={liked:[],disliked:[],notes:STATE.preferences.notes};
+    saveAll(); renderAll(); showToast('Vorlieben gelöscht 🌱');
   }
 });
 
-// ═══════════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════
 // INIT
-// ═══════════════════════════════════════════════════════════════════
-function init() {
-  STATE.weekKey = currentWeekKey();
-  STATE.preferences = loadPrefs();
-  STATE.apiKey = localStorage.getItem('sp_apikey') || '';
-  STATE.plan = loadPlan(STATE.weekKey);
-  renderMascot();
-  renderAll();
-  // open first accordion on mobile
-  if (window.innerWidth < 760) {
-    const today = new Date().getDay(); // 0=sun, 1=mon...
-    const idx = today === 0 ? 6 : today - 1;
-    const dayEl = document.getElementById(`acc_${DAYS[idx]}`);
-    if (dayEl) dayEl.classList.add('open');
+// ═══════════════════════════════════════════════════════════
+async function init() {
+  STATE.weekKey=currentWeekKey();
+  STATE.preferences=loadPrefs();
+  STATE.apiKey=localStorage.getItem('sp_apikey')||'';
+  STATE.firebaseUrl=localStorage.getItem('sp_fburl')||'';
+  STATE.plan=loadPlan(STATE.weekKey);
+  renderMascot(); renderAll();
+  if(window.innerWidth<760){
+    const today=new Date().getDay();
+    const idx=today===0?6:today-1;
+    document.getElementById(`acc_${DAYS[idx]}`)?.classList.add('open');
   }
-  // Show hint if no API key
-  if (!STATE.apiKey) {
-    setTimeout(() => showToast('Tipp: API-Key in ⚙️ eingeben für KI-Vorschläge'), 1200);
-  }
+  if(STATE.firebaseUrl) await syncFromCloud();
+  else if(!STATE.apiKey) setTimeout(()=>showToast('Tipp: API-Key in ⚙️ eingeben'),1200);
 }
 
 init();
