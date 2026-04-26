@@ -5,7 +5,7 @@ woche,tag,tag_label,mahlzeit,mahlzeit_label,gericht,status
 "2026-W17","dienstag","Dienstag","mittagessen","Mittagessen","Griechischer Salat mit Feta, Oliven, Gurke und Tomate, dazu Vollkornpita","pending"
 "2026-W17","dienstag","Dienstag","abendessen","Abendessen","Gemüse-Curry mit Kichererbsen und Blumenkohl auf Basmatireis","pending"
 "2026-W17","mittwoch","Mittwoch","mittagessen","Mittagessen","Linsen-Gemüse-Eintopf (300g) mit 1 Scheibe Vollkornbrot (50g)","pending"
-"2026-W17","mittwoch","Mittwoch","abendessen","Abendessen","Gefüllte Paprika mit Quinoa, schwarzen Bohnen und Tomatensoße","pending"
+"2026-W17","mittwoch","Mittwoch","abendessen","Abendessen","200g Ofengemüse (Paprika, Aubergine, Champignons) mit 150g Hüttenkäse und 2 Vollkornknäckebrot","pending"
 "2026-W17","mittwoch","Mittwoch","sport","Sporteinheit","10 Min Yoga für Anfänger – atme tief durch und spüre wie dein Körper aufblüht!","pending"
 "2026-W17","donnerstag","Donnerstag","mittagessen","Mittagessen","Bunter Bohnensalat mit Paprika, Mais und Limetten-Dressing","pending"
 "2026-W17","donnerstag","Donnerstag","abendessen","Abendessen","Spinat-Ricotta-Pfanne mit Vollkornnudeln","pending"
@@ -13,7 +13,7 @@ woche,tag,tag_label,mahlzeit,mahlzeit_label,gericht,status
 "2026-W17","freitag","Freitag","abendessen","Abendessen","Vegane Buddha Bowl mit Kichererbsen, Avocado, Süßkartoffel und Tahini-Dressing","pending"
 "2026-W17","freitag","Freitag","sport","Sporteinheit","12 Min Tanzen zu deiner Lieblingsmusik – lass dich gehen und hab Spaß dabei!","pending"
 "2026-W17","samstag","Samstag","mittagessen","Mittagessen","Vollkorn-Wrap mit Hummus, gegrilltem Gemüse und frischen Kräutern","pending"
-"2026-W17","samstag","Samstag","snack","Nachmittagssnack","1 Apfel mit 1 EL Mandelmus","pending"
+"2026-W17","samstag","Samstag","snack","Nachmittagssnack","2 Reiswaffeln mit je 1 TL Mandelmus und 1 Scheibe Banane","accepted"
 "2026-W17","samstag","Samstag","abendessen","Abendessen","Gemüse-Quiche mit Zucchini und Tomaten auf Dinkelteig, dazu grüner Salat","pending"
 "2026-W17","samstag","Samstag","sport","Sporteinheit","15 Min Spaziergang im Park oder Wald – genieße die frische Luft und die Natur!","pending"
 "2026-W17","sonntag","Sonntag","mittagessen","Mittagessen","Rote-Bete-Salat mit Walnüssen, Ziegenkäse und Honig-Senf-Dressing","pending"
@@ -22,5 +22,5 @@ woche,tag,tag_label,mahlzeit,mahlzeit_label,gericht,status
 "2026-W17","sonntag","Sonntag","sport","Sporteinheit","10 Min sanftes Stretching für den ganzen Körper – starte erholt in die neue Woche!","pending"
 
 # Vorlieben
-"liked",""
+"liked","2 Reiswaffeln mit je 1 TL Mandelmus und 1 Scheibe Banane"
 "disliked",""
