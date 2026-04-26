@@ -172,6 +172,20 @@ const MEALS=['fruehstueck','mittagessen','snack','abendessen'];
 const MEAL_LABELS=['🌅 Frühstück','☀️ Mittagessen','🍎 Snack','🌙 Abendessen'];
 const DAY_COLORS=['#F9DDE6','#FDDFC0','#D6EDD8','#E5DEFF','#FAECC7','#C8E8F5','#F0D4EA'];
 
+const WEEKEND=['samstag','sonntag'];
+const NO_SPORT=['dienstag','donnerstag'];
+const HAS_SPORT=day=>!NO_SPORT.includes(day);
+const HAS_SNACK=day=>WEEKEND.includes(day);
+function mealsForDay(day){
+  const m=['mittagessen','abendessen'];
+  if(HAS_SNACK(day))m.splice(1,0,'snack');
+  if(HAS_SPORT(day))m.push('sport');
+  return m;
+}
+function mealLabel(meal){
+  return{mittagessen:'☀️ Mittagessen',abendessen:'🌙 Abendessen',snack:'🍎 Nachmittagssnack',sport:'🏃 Sport (10–15 Min)'}[meal]||meal;
+}
+
 function getISOWeek(d){const t=new Date(d);t.setHours(0,0,0,0);t.setDate(t.getDate()+3-(t.getDay()+6)%7);const w=new Date(t.getFullYear(),0,4);return 1+Math.round(((t-w)/86400000-3+(w.getDay()+6)%7)/7);}
 
 function renderMascot(weekKey){
@@ -311,14 +325,16 @@ function renderDesktop(plan){
   DAYS.forEach((day,di)=>{
     const col=document.createElement('div');col.className='day-col';
     let h=`<div class="day-head ${day}">${DAY_LABELS[di]}</div>`;
-    MEALS.forEach((meal,mi)=>{
+    mealsForDay(day).forEach(meal=>{
       const e=plan[day]?.[meal];
       const name=e?.name||'';
       const status=e?.status||'pending';
-      const nameCls=['meal-name',!name?'empty':'',status==='accepted'?'accepted':''].filter(Boolean).join(' ');
-      const badge=status==='accepted'?'<span class="status-badge accepted">✓ lecker</span>':'';
-      h+=`<div class="meal-slot ${status==='accepted'?'accepted':''}">
-        <div class="meal-type">${MEAL_LABELS[mi]}</div>
+      const isSport=meal==='sport';
+      const nameCls=['meal-name',!name?'empty':'',status==='accepted'&&!isSport?'accepted':''].filter(Boolean).join(' ');
+      const badge=status==='accepted'&&!isSport?'<span class="status-badge accepted">✓ lecker</span>':'';
+      const sportStyle=isSport?'border-top:2px solid rgba(184,212,181,.4);background:rgba(214,237,216,.12);':'';
+      h+=`<div class="meal-slot ${status==='accepted'&&!isSport?'accepted':''}" style="${sportStyle}">
+        <div class="meal-type">${mealLabel(meal)}</div>
         <div class="${nameCls}">${name||'—'}</div>
         ${badge}
       </div>`;
@@ -332,14 +348,16 @@ function renderMobile(plan){
   DAYS.forEach((day,di)=>{
     const div=document.createElement('div');div.className='acc-day';div.id=`acc_${day}`;
     let body='';
-    MEALS.forEach((meal,mi)=>{
+    mealsForDay(day).forEach(meal=>{
       const e=plan[day]?.[meal];
       const name=e?.name||'—';
       const status=e?.status||'pending';
-      const nameCls=['meal-name',!e?.name?'empty':'',status==='accepted'?'accepted':''].filter(Boolean).join(' ');
-      const badge=status==='accepted'?'<span class="status-badge accepted">✓ lecker</span>':'';
-      body+=`<div class="acc-meal ${status==='accepted'?'accepted':''}">
-        <div class="meal-type">${MEAL_LABELS[mi]}</div>
+      const isSport=meal==='sport';
+      const nameCls=['meal-name',!e?.name?'empty':'',status==='accepted'&&!isSport?'accepted':''].filter(Boolean).join(' ');
+      const badge=status==='accepted'&&!isSport?'<span class="status-badge accepted">✓ lecker</span>':'';
+      const sportStyle=isSport?'border-top:2px solid rgba(184,212,181,.4);background:rgba(214,237,216,.12);':'';
+      body+=`<div class="acc-meal ${status==='accepted'&&!isSport?'accepted':''}" style="${sportStyle}">
+        <div class="meal-type">${mealLabel(meal)}</div>
         <div class="${nameCls}">${name}</div>
         ${badge}
       </div>`;

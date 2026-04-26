@@ -185,9 +185,23 @@ h1 em{color:var(--dusty-rose);font-style:italic;}
 <script>
 const DAYS=['montag','dienstag','mittwoch','donnerstag','freitag','samstag','sonntag'];
 const DAY_LABELS=['Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag','Sonntag'];
-const MEALS=['fruehstueck','mittagessen','snack','abendessen'];
-const MEAL_LABELS=['🌅 Frühstück','☀️ Mittagessen','🍎 Snack','🌙 Abendessen'];
-const MEAL_NAMES=['Frühstück','Mittagessen','Nachmittagssnack','Abendessen'];
+const WEEKEND=['samstag','sonntag'];
+const NO_SPORT=['dienstag','donnerstag'];
+const HAS_SPORT=day=>!NO_SPORT.includes(day);
+const HAS_SNACK=day=>WEEKEND.includes(day);
+
+function mealsForDay(day){
+  const m=['mittagessen','abendessen'];
+  if(HAS_SNACK(day))m.splice(1,0,'snack');
+  if(HAS_SPORT(day))m.push('sport');
+  return m;
+}
+function mealLabel(meal){
+  return{mittagessen:'☀️ Mittagessen',abendessen:'🌙 Abendessen',snack:'🍎 Nachmittagssnack',sport:'🏃 Sport (10–15 Min)'}[meal]||meal;
+}
+function mealName(meal){
+  return{mittagessen:'Mittagessen',abendessen:'Abendessen',snack:'Nachmittagssnack',sport:'Sporteinheit'}[meal]||meal;
+}
 
 let STATE={
   weekKey:'',
@@ -222,16 +236,18 @@ function renderGrid(){
   DAYS.forEach((day,di)=>{
     const card=document.createElement('div');card.className='day-card';
     let h=`<div class="day-head ${day}">${DAY_LABELS[di]}</div>`;
-    MEALS.forEach((meal,mi)=>{
+    mealsForDay(day).forEach(meal=>{
       const e=STATE.plan[day]?.[meal]||{};
       const loading=e.loading;
+      const isSport=meal==='sport';
       const statusCls=loading?'loading':e.status==='accepted'?'accepted':e.status==='rejected'?'rejected':'';
-      h+=`<div class="meal-row">
-        <div class="meal-lbl">${MEAL_LABELS[mi]}</div>
+      const sportStyle=isSport?'border-top:2px solid rgba(184,212,181,.4);background:rgba(214,237,216,.12);':'';
+      h+=`<div class="meal-row" style="${sportStyle}">
+        <div class="meal-lbl">${mealLabel(meal)}</div>
         <div class="meal-text ${statusCls}" contenteditable="${loading?'false':'true'}" id="txt_${day}_${meal}" onblur="updateText('${day}','${meal}',this.innerText)">${loading?'Neuer Vorschlag…':e.name||''}</div>
         <div class="meal-actions">
-          <button class="mbt ok ${e.status==='accepted'?'on':''}" onclick="setStatus('${day}','${meal}','accepted')" title="Lecker!">👍</button>
-          <button class="mbt no ${e.status==='rejected'?'on':''}" onclick="setStatus('${day}','${meal}','rejected')" title="Nicht so">👎</button>
+          ${isSport?'':` <button class="mbt ok ${e.status==='accepted'?'on':''}" onclick="setStatus('${day}','${meal}','accepted')" title="Lecker!">👍</button>
+          <button class="mbt no ${e.status==='rejected'?'on':''}" onclick="setStatus('${day}','${meal}','rejected')" title="Nicht so">👎</button>`}
           <button class="mbt redo" onclick="regenOne('${day}','${meal}')" title="Neu würfeln" ${loading?'disabled':''}>${redoSvg}</button>
         </div>
       </div>`;
@@ -282,38 +298,50 @@ async function generateWeek(){
   if(!STATE.apiKey){openSettings();showToast('Bitte zuerst Claude API-Key eingeben 🔑');return;}
   setLoading(true,'Claude erstellt deinen Wochenplan…');
   const p=STATE.prefs;
-  const sys=`Du bist ein freundlicher Ernährungsberater. Erstelle einen ausgewogenen, kalorienreduzierten Wochenspeiseplan auf Deutsch für jemanden der abnehmen möchte. Achte auf Abwechslung und einfache Zubereitung.
-${p.liked.length?`Diese Gerichte mochte die Person – gerne öfter ähnliches vorschlagen: ${p.liked.slice(-20).join(', ')}`:''}
-${p.disliked.length?`Diese Gerichte wurden ABGELEHNT – niemals vorschlagen: ${p.disliked.slice(-20).join(', ')}`:''}
+  const sys=`Du bist ein freundlicher Ernährungsberater und Fitness-Coach. Erstelle einen ausgewogenen, kalorienreduzierten Wochenspeiseplan auf Deutsch für jemanden der abnehmen möchte.
+Regeln:
+- Kein Frühstück – der Tag beginnt mit dem Mittagessen
+- Nachmittagssnack NUR samstags und sonntags
+- Sport (10–15 Minuten, konkrete Übung) an allen Tagen AUSSER Dienstag und Donnerstag
+- Beim Sport: kurze, motivierende Beschreibung z.B. "15 Min Spaziergang im Wald" oder "10 Min Yoga für Anfänger"
+${p.liked.length?`Gerichte die gemocht wurden (öfter vorschlagen): ${p.liked.slice(-20).join(', ')}`:''}
+${p.disliked.length?`Gerichte die ABGELEHNT wurden (niemals vorschlagen): ${p.disliked.slice(-20).join(', ')}`:''}
 ${p.notes?`Persönliche Hinweise: ${p.notes}`:''}
 Antworte NUR mit einem validen JSON-Objekt, kein Markdown, keine Erklärungen.
-Format: {"montag":{"fruehstueck":"...","mittagessen":"...","snack":"...","abendessen":"..."},"dienstag":{"fruehstueck":"...","mittagessen":"...","snack":"...","abendessen":"..."},"mittwoch":{"fruehstueck":"...","mittagessen":"...","snack":"...","abendessen":"..."},"donnerstag":{"fruehstueck":"...","mittagessen":"...","snack":"...","abendessen":"..."},"freitag":{"fruehstueck":"...","mittagessen":"...","snack":"...","abendessen":"..."},"samstag":{"fruehstueck":"...","mittagessen":"...","snack":"...","abendessen":"..."},"sonntag":{"fruehstueck":"...","mittagessen":"...","snack":"...","abendessen":"..."}}`;
+Format (sport nur Mo/Mi/Fr/Sa/So, snack nur Sa/So):
+{"montag":{"mittagessen":"...","abendessen":"...","sport":"..."},"dienstag":{"mittagessen":"...","abendessen":"..."},"mittwoch":{"mittagessen":"...","abendessen":"...","sport":"..."},"donnerstag":{"mittagessen":"...","abendessen":"..."},"freitag":{"mittagessen":"...","abendessen":"...","sport":"..."},"samstag":{"mittagessen":"...","snack":"...","abendessen":"...","sport":"..."},"sonntag":{"mittagessen":"...","snack":"...","abendessen":"...","sport":"..."}}`;
   try{
-    const text=await callClaude(sys,'Erstelle meinen Wochenspeiseplan.',1400);
+    const text=await callClaude(sys,'Erstelle meinen Wochenspeiseplan.',1600);
     const parsed=JSON.parse(text.replace(/```json|```/g,'').trim());
     STATE.plan={};
     DAYS.forEach(day=>{
       STATE.plan[day]={};
-      MEALS.forEach(meal=>{STATE.plan[day][meal]={name:parsed[day]?.[meal]||'',status:'pending'};});
+      mealsForDay(day).forEach(meal=>{STATE.plan[day][meal]={name:parsed[day]?.[meal]||'',status:'pending'};});
     });
-    save();renderAll();showToast('Plan erstellt! Bewerte die Mahlzeiten und speichere dann als CSV 🌸');
+    save();renderAll();showToast('Plan erstellt! Bewerte und speichere dann in GitHub 🌸');
   }catch(e){showToast('Fehler: '+(e.message||'API-Key prüfen'));}
   setLoading(false);
 }
 
 async function regenOne(day,meal){
   if(!STATE.apiKey){showToast('Claude API-Key fehlt');return;}
-  const mi=MEALS.indexOf(meal),di=DAYS.indexOf(day);
+  const di=DAYS.indexOf(day);
   if(!STATE.plan[day])STATE.plan[day]={};
   const oldName=STATE.plan[day][meal]?.name||'';
   STATE.plan[day][meal]={name:'',status:'pending',loading:true};
   save();renderAll();
   const p=STATE.prefs;
-  const sys=`Ernährungsberater. Antworte NUR mit dem Namen eines einzigen Gerichts. Kein Punkt, keine Erklärung, kein Emoji.
-${p.disliked.length?`NIEMALS vorschlagen: ${p.disliked.join(', ')}`:''}
-${p.liked.length?`In diese Richtung denken: ${p.liked.join(', ')}`:''}`;
+  const isSport=meal==='sport';
+  const sys=isSport
+    ?`Fitness-Coach. Antworte NUR mit einer kurzen Sportaktivität (10–15 Min). Kein Punkt. Z.B. "15 Min Yoga für Anfänger" oder "10 Min Spaziergang". Nicht: "${oldName}"`
+    :`Ernährungsberater. Antworte NUR mit dem Namen eines einzigen Gerichts. Kein Punkt, keine Erklärung.
+${p.disliked.length?`NIEMALS: ${p.disliked.join(', ')}`:''}
+${p.liked.length?`In diese Richtung: ${p.liked.join(', ')}`:''}`;
+  const prompt=isSport
+    ?`Neue Sportaktivität für ${DAY_LABELS[di]}.`
+    :`Alternatives ${mealName(meal)} für ${DAY_LABELS[di]} (kalorienreduziert). Nicht: "${oldName}"`;
   try{
-    const text=await callClaude(sys,`Alternativer ${MEAL_NAMES[mi]} für ${DAY_LABELS[di]} (kalorienreduziert). Nicht: "${oldName}"`,80);
+    const text=await callClaude(sys,prompt,80);
     const name=text.trim().replace(/^["„]|[""]$/g,'').trim();
     STATE.plan[day][meal]={name,status:'pending',loading:false};
     save();renderAll();showToast('Neuer Vorschlag: '+name+' ✨');
@@ -329,11 +357,11 @@ function buildCSV(){
   const yr=STATE.weekKey.split('-W')[0];
   let csv='woche,tag,tag_label,mahlzeit,mahlzeit_label,gericht,status\n';
   DAYS.forEach((day,di)=>{
-    MEALS.forEach((meal,mi)=>{
+    mealsForDay(day).forEach(meal=>{
       const e=STATE.plan[day]?.[meal];
       const name=(e?.name||'').replace(/"/g,'""');
       const status=e?.status||'pending';
-      csv+=`"${yr}-W${wNum}","${day}","${DAY_LABELS[di]}","${meal}","${MEAL_NAMES[mi]}","${name}","${status}"\n`;
+      csv+=`"${yr}-W${wNum}","${day}","${DAY_LABELS[di]}","${meal}","${mealName(meal)}","${name}","${status}"\n`;
     });
   });
   csv+='\n# Vorlieben\n';
