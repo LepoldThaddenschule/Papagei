@@ -511,16 +511,80 @@ document.getElementById('exportBtn').addEventListener('click',pushToGitHub);
 document.getElementById('prevBtn').addEventListener('click',()=>{STATE.weekKey=shiftWeek(STATE.weekKey,-1);load();renderAll();});
 document.getElementById('nextBtn').addEventListener('click',()=>{STATE.weekKey=shiftWeek(STATE.weekKey,1);load();renderAll();});
 
+// ── Load prefs from GitHub CSV ──
+async function loadPrefsFromGitHub(){
+  if(!STATE.ghToken||!STATE.ghUser||!STATE.ghRepo)return;
+  try{
+    const apiUrl=`https://api.github.com/repos/${STATE.ghUser}/${STATE.ghRepo}/contents/speiseplan.csv`;
+    const r=await fetch(apiUrl,{headers:{'Authorization':'token '+STATE.ghToken,'Accept':'application/vnd.github.v3+json'}});
+    if(!r.ok)return;
+    const d=await r.json();
+    const text=decodeURIComponent(escape(atob(d.content.replace(/\n/g,''))));
+    // Parse liked/disliked from CSV
+    const liked=[],disliked=[];
+    text.split('\n').forEach(line=>{
+      const row=line.replace(/^"|"$/g,'').split('","');
+      if(row[0]==='liked'&&row[1])liked.push(...row[1].split(';').filter(Boolean));
+      if(row[0]==='disliked'&&row[1])disliked.push(...row[1].split(';').filter(Boolean));
+    });
+    // Merge: GitHub is source of truth for liked/disliked
+    if(liked.length||disliked.length){
+      STATE.prefs.liked=[...new Set([...liked])];
+      STATE.prefs.disliked=[...new Set([...disliked])];
+      localStorage.setItem('sp_prefs',JSON.stringify(STATE.prefs));
+      renderPrefsBar();
+      showToast('Vorlieben aus GitHub geladen ✓','success');
+    }
+  }catch(e){/* silently fail */}
+}
+
 // ── Init ──
-function init(){
-  STATE.weekKey=curWeek();
+function findMostRecentWeek(){
+  const keys=[];
+  for(let i=0;i<localStorage.length;i++){
+    const k=localStorage.key(i);
+    if(k&&k.startsWith('sp_plan_')){
+      const wk=k.replace('sp_plan_','');
+      try{
+        const p=JSON.parse(localStorage.getItem(k));
+        const hasData=p&&Object.keys(p).some(d=>Object.keys(p[d]||{}).some(m=>p[d][m]?.name));
+        if(hasData)keys.push(wk);
+      }catch{}
+    }
+  }
+  if(!keys.length)return null;
+  keys.sort((a,b)=>{
+    const[ay,aw]=a.split('-W').map(Number);
+    const[by,bw]=b.split('-W').map(Number);
+    return(by*100+bw)-(ay*100+aw);
+  });
+  return keys[0];
+}
+
+async function init(){
   STATE.apiKey=localStorage.getItem('sp_apikey')||'';
   STATE.ghToken=localStorage.getItem('sp_ghtoken')||'';
   STATE.ghUser=localStorage.getItem('sp_ghuser')||'';
   STATE.ghRepo=localStorage.getItem('sp_ghrepo')||'';
-  load();renderAll();
-  if(STATE.ghToken&&STATE.ghUser&&STATE.ghRepo)setGhStatus('ok');
-  if(!STATE.apiKey)setTimeout(()=>showToast('Tipp: ⚙️ öffnen und API-Keys eingeben','info'),1200);
+  try{STATE.prefs=JSON.parse(localStorage.getItem('sp_prefs'))||{liked:[],disliked:[],notes:''}}catch{}
+
+  STATE.weekKey=curWeek();
+  load();
+  const hasData=DAYS.some(d=>mealsForDay(d).some(m=>STATE.plan[d]?.[m]?.name));
+  if(!hasData){
+    const recent=findMostRecentWeek();
+    if(recent&&recent!==STATE.weekKey){
+      STATE.weekKey=recent;load();
+      showToast('Letzter Plan geladen ('+weekLabel(recent)+') 📋','info');
+    }
+  }
+  renderAll();
+  if(STATE.ghToken&&STATE.ghUser&&STATE.ghRepo){
+    setGhStatus('ok');
+    // Load latest prefs from GitHub in background
+    await loadPrefsFromGitHub();
+  }
+  if(!STATE.apiKey)setTimeout(()=>showToast('Tipp: ⚙️ öffnen und API-Keys eingeben','info'),1400);
 }
 init();
 </script>

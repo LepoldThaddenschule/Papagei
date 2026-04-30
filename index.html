@@ -80,9 +80,34 @@ h1 em{color:var(--dusty-rose);font-style:italic;}
 .bottom-link a{color:var(--soft-purple);font-weight:700;text-decoration:none;}
 .bottom-link a:hover{text-decoration:underline;}
 
-/* TOAST & LOADING */
-.toast{position:fixed;bottom:1.8rem;left:50%;transform:translateX(-50%) translateY(80px);background:var(--warm-text);color:white;padding:.6rem 1.3rem;border-radius:18px;font-size:.8rem;z-index:300;transition:transform .3s;pointer-events:none;white-space:nowrap;}
+/* Rating buttons */
+.mbtn{width:26px;height:26px;border-radius:50%;border:1.5px solid;background:transparent;cursor:pointer;font-size:.72rem;display:flex;align-items:center;justify-content:center;transition:all .18s;flex-shrink:0;}
+.mbtn.ok{border-color:var(--sage);color:#5A8A58;}.mbtn.ok:hover,.mbtn.ok.on{background:var(--sage);color:white;}
+.mbtn.no{border-color:var(--dusty-rose);color:#B0607A;}.mbtn.no:hover,.mbtn.no.on{background:var(--dusty-rose);color:white;}
+.meal-actions{display:flex;gap:.28rem;margin-top:.35rem;}
+
+/* Toast */
+.toast{position:fixed;bottom:1.8rem;left:50%;transform:translateX(-50%) translateY(90px);padding:.65rem 1.4rem;border-radius:18px;font-size:.8rem;z-index:300;transition:transform .35s cubic-bezier(.34,1.56,.64,1);pointer-events:none;max-width:90vw;text-align:center;}
 .toast.show{transform:translateX(-50%) translateY(0);}
+.toast.info{background:var(--warm-text);color:white;}
+.toast.success{background:linear-gradient(135deg,#5aaa58,#3d8a3b);color:white;box-shadow:0 4px 20px rgba(90,170,88,.35);}
+.toast.error{background:linear-gradient(135deg,#c0545a,#9a3a3e);color:white;}
+
+/* Settings modal */
+.overlay{position:fixed;inset:0;background:rgba(90,70,90,.3);backdrop-filter:blur(4px);z-index:100;display:none;align-items:center;justify-content:center;padding:1rem;}
+.overlay.open{display:flex;}
+.modal{background:var(--cream);border-radius:22px;padding:1.7rem;max-width:400px;width:100%;box-shadow:0 20px 50px rgba(90,60,90,.18);max-height:90vh;overflow-y:auto;}
+.modal h2{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:400;margin-bottom:.25rem;}
+.modal-sub{font-size:.76rem;color:var(--light-text);margin-bottom:1rem;line-height:1.5;}
+.fg{margin-bottom:.8rem;}
+.fg label{display:block;font-size:.7rem;font-weight:800;color:var(--light-text);margin-bottom:.3rem;text-transform:uppercase;letter-spacing:.08em;}
+.fg input{width:100%;padding:.6rem .85rem;border:1.5px solid var(--border);border-radius:11px;background:white;font-family:'Nunito',sans-serif;font-size:.86rem;color:var(--warm-text);outline:none;transition:border-color .2s;}
+.fg input:focus{border-color:var(--soft-purple);}
+.modal-actions{display:flex;gap:.6rem;justify-content:flex-end;margin-top:1rem;}
+.btn-ghost{background:var(--card);color:var(--mid-text);border:1.5px solid var(--border);padding:.5rem 1.1rem;border-radius:18px;cursor:pointer;font-family:'Nunito',sans-serif;font-weight:700;font-size:.8rem;transition:all .2s;}
+.btn-ghost:hover{background:var(--lavender);}
+.btn-primary{background:linear-gradient(135deg,var(--dusty-rose),var(--soft-purple));color:white;padding:.5rem 1.1rem;border:none;border-radius:18px;cursor:pointer;font-family:'Nunito',sans-serif;font-weight:700;font-size:.8rem;transition:all .2s;}
+.btn-primary:hover{transform:translateY(-2px);}
 .loading-veil{position:fixed;inset:0;background:rgba(253,248,244,.9);backdrop-filter:blur(4px);z-index:200;display:none;align-items:center;justify-content:center;flex-direction:column;gap:1rem;}
 .loading-veil.on{display:flex;}
 .dots{display:flex;gap:.45rem;}
@@ -122,6 +147,10 @@ h1 em{color:var(--dusty-rose);font-style:italic;}
 <header>
   <h1>Mein <em>Wochenspeiseplan</em></h1>
   <p class="subtitle">Gesund · Lecker · Ausgewogen</p>
+  <div style="position:absolute;top:1.4rem;right:1rem;display:flex;gap:.4rem;">
+    <button class="icon-btn" id="refreshBtn" title="Neu laden">🔄</button>
+    <button class="icon-btn" id="settingsBtn" title="GitHub Einstellungen">⚙️</button>
+  </div>
 </header>
 
 <div class="mascot-section">
@@ -149,7 +178,22 @@ h1 em{color:var(--dusty-rose);font-style:italic;}
   Plan ändern? → <a href="erstellen.html">erstellen.html</a> öffnen
 </div>
 
-<div class="loading-veil" id="loadingVeil">
+<!-- SETTINGS MODAL -->
+<div class="overlay" id="settingsOverlay">
+  <div class="modal">
+    <h2>Einstellungen ⚙️</h2>
+    <p class="modal-sub">GitHub-Daten eintragen um Bewertungen zu speichern (dieselben Werte wie in erstellen.html).</p>
+    <div class="fg"><label>GitHub Token</label><input type="password" id="ghTokenInput" placeholder="ghp_…" autocomplete="off"></div>
+    <div class="fg"><label>GitHub Benutzername</label><input type="text" id="ghUserInput" placeholder="lepoldthaddenschule"></div>
+    <div class="fg"><label>GitHub Repo-Name</label><input type="text" id="ghRepoInput" placeholder="Papagei"></div>
+    <div class="modal-actions">
+      <button class="btn-ghost" onclick="document.getElementById('settingsOverlay').classList.remove('open')">Abbrechen</button>
+      <button class="btn-primary" id="saveSettingsBtn">Speichern</button>
+    </div>
+  </div>
+</div>
+
+
   <div class="dots"><span></span><span></span><span></span></div>
   <p class="loading-lbl">Lade Speiseplan…</p>
 </div>
@@ -333,10 +377,14 @@ function renderDesktop(plan){
       const nameCls=['meal-name',!name?'empty':'',status==='accepted'&&!isSport?'accepted':''].filter(Boolean).join(' ');
       const badge=status==='accepted'&&!isSport?'<span class="status-badge accepted">✓ lecker</span>':'';
       const sportStyle=isSport?'border-top:2px solid rgba(184,212,181,.4);background:rgba(214,237,216,.12);':'';
+      const btns=!isSport?`<div class="meal-actions">
+        <button class="mbtn ok ${status==='accepted'?'on':''}" onclick="rate('${day}','${meal}','accepted')" title="Lecker!">👍</button>
+        <button class="mbtn no ${status==='rejected'?'on':''}" onclick="rate('${day}','${meal}','rejected')" title="Nicht so">👎</button>
+      </div>`:'';
       h+=`<div class="meal-slot ${status==='accepted'&&!isSport?'accepted':''}" style="${sportStyle}">
         <div class="meal-type">${mealLabel(meal)}</div>
         <div class="${nameCls}">${name||'—'}</div>
-        ${badge}
+        ${badge}${btns}
       </div>`;
     });
     col.innerHTML=h;g.appendChild(col);
@@ -356,10 +404,14 @@ function renderMobile(plan){
       const nameCls=['meal-name',!e?.name?'empty':'',status==='accepted'&&!isSport?'accepted':''].filter(Boolean).join(' ');
       const badge=status==='accepted'&&!isSport?'<span class="status-badge accepted">✓ lecker</span>':'';
       const sportStyle=isSport?'border-top:2px solid rgba(184,212,181,.4);background:rgba(214,237,216,.12);':'';
+      const btns=!isSport?`<div class="meal-actions" style="margin-top:.3rem;">
+        <button class="mbtn ok ${status==='accepted'?'on':''}" onclick="rate('${day}','${meal}','accepted')" title="Lecker!">👍</button>
+        <button class="mbtn no ${status==='rejected'?'on':''}" onclick="rate('${day}','${meal}','rejected')" title="Nicht so">👎</button>
+      </div>`:'';
       body+=`<div class="acc-meal ${status==='accepted'&&!isSport?'accepted':''}" style="${sportStyle}">
         <div class="meal-type">${mealLabel(meal)}</div>
         <div class="${nameCls}">${name}</div>
-        ${badge}
+        ${badge}${btns}
       </div>`;
     });
     div.innerHTML=`<div class="acc-head" onclick="toggleAcc('${day}')" style="background:${DAY_COLORS[di]}">
@@ -372,68 +424,141 @@ function renderMobile(plan){
 function toggleAcc(d){document.getElementById(`acc_${d}`)?.classList.toggle('open');}
 
 let tt;
-function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),4000);}
+function showToast(msg,type='info'){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.className='toast show '+(type||'info');
+  clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),type==='success'?4000:3500);
+}
 function setLoading(on){document.getElementById('loadingVeil').classList.toggle('on',on);}
 
-// ── Load CSV – tries multiple paths ──
+// ── GitHub settings ──
+let GH={token:'',user:'',repo:''};
+let CURRENT_CSV_TEXT=''; // keep original CSV for patching
+let CURRENT_PLAN={};
+let CURRENT_WEEKKEY='';
+
+function loadGhSettings(){
+  GH.token=localStorage.getItem('sp_ghtoken')||'';
+  GH.user=localStorage.getItem('sp_ghuser')||'';
+  GH.repo=localStorage.getItem('sp_ghrepo')||'';
+}
+
+// ── Rating: toggle status and push CSV back to GitHub ──
+async function rate(day,meal,newStatus){
+  if(!CURRENT_PLAN[day]?.[meal])return;
+  const e=CURRENT_PLAN[day][meal];
+  e.status=e.status===newStatus?'pending':newStatus;
+  renderPlan(CURRENT_PLAN,CURRENT_WEEKKEY);
+  // Update liked/disliked in prefs within CSV
+  if(!GH.token||!GH.user||!GH.repo){
+    showToast('Tipp: ⚙️ GitHub-Daten eingeben um Bewertungen dauerhaft zu speichern','info');
+    return;
+  }
+  try{
+    const csv=rebuildCSV(CURRENT_PLAN,CURRENT_WEEKKEY);
+    await pushCSV(csv);
+    showToast(e.status==='accepted'?'👍 Gemerkt!':e.status==='rejected'?'👎 Gemerkt!':'Bewertung entfernt','success');
+  }catch(err){
+    showToast('Speichern fehlgeschlagen: '+err.message,'error');
+  }
+}
+
+function rebuildCSV(plan,weekKey){
+  const[yr,wS]=weekKey.split('-W');
+  let csv='woche,tag,tag_label,mahlzeit,mahlzeit_label,gericht,status\n';
+  DAYS.forEach((day,di)=>{
+    mealsForDay(day).forEach(meal=>{
+      const e=plan[day]?.[meal];
+      const name=(e?.name||'').replace(/"/g,'""');
+      const status=e?.status||'pending';
+      const mLabel={'mittagessen':'Mittagessen','abendessen':'Abendessen','snack':'Nachmittagssnack','sport':'Sporteinheit'}[meal]||meal;
+      csv+=`"${yr}-W${wS}","${day}","${DAY_LABELS[DAYS.indexOf(day)]}","${meal}","${mLabel}","${name}","${status}"\n`;
+    });
+  });
+  // Build accumulated liked/disliked:
+  // Start from existing prefs in the CSV, then apply current week's ratings on top
+  const{prefs:existingPrefs}=parseCSV(CURRENT_CSV_TEXT);
+  const liked=new Set(existingPrefs.liked||[]);
+  const disliked=new Set(existingPrefs.disliked||[]);
+  DAYS.forEach(d=>mealsForDay(d).forEach(m=>{
+    const e=plan[d]?.[m];if(!e?.name||e.name==='sport')return;
+    if(e.status==='accepted'){liked.add(e.name);disliked.delete(e.name);}
+    else if(e.status==='rejected'){disliked.add(e.name);liked.delete(e.name);}
+  }));
+  csv+='\n# Vorlieben\n';
+  csv+=`"liked","${[...liked].map(x=>x.replace(/"/g,'""')).join(';')}"\n`;
+  csv+=`"disliked","${[...disliked].map(x=>x.replace(/"/g,'""')).join(';')}"\n`;
+  // Keep original CSV text updated so subsequent ratings accumulate correctly
+  CURRENT_CSV_TEXT=csv;
+  return csv;
+}
+
+async function pushCSV(csv){
+  const content=btoa(unescape(encodeURIComponent(csv)));
+  const apiUrl=`https://api.github.com/repos/${GH.user}/${GH.repo}/contents/speiseplan.csv`;
+  let sha='';
+  try{const c=await fetch(apiUrl,{headers:{'Authorization':'token '+GH.token,'Accept':'application/vnd.github.v3+json'}});if(c.ok){const d=await c.json();sha=d.sha||'';}}catch{}
+  const body={message:'Bewertungen aktualisiert 🌱',content};if(sha)body.sha=sha;
+  const r=await fetch(apiUrl,{method:'PUT',headers:{'Authorization':'token '+GH.token,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'},body:JSON.stringify(body)});
+  if(!r.ok){const err=await r.json();throw new Error(err.message||r.status);}
+}
+
+// ── Load CSV ──
 async function loadCSV(){
   setLoading(true);
-
-  // Build list of URLs to try
   const loc=window.location;
   const base=loc.origin+loc.pathname.replace(/[^/]*$/,'');
-  // Also try raw GitHub if on github.io
   const ghRaw=loc.hostname.endsWith('github.io')
-    ? 'https://raw.githubusercontent.com/'+loc.hostname.replace('.github.io','')+loc.pathname.replace('index.html','')+'speiseplan.csv'
-    : null;
-
-  const urls=[
-    base+'speiseplan.csv?v='+Date.now(),
-    'speiseplan.csv?v='+Date.now(),
-    ghRaw
-  ].filter(Boolean);
-
+    ?'https://raw.githubusercontent.com/'+loc.hostname.replace('.github.io','')+loc.pathname.replace('index.html','')+'speiseplan.csv'
+    :null;
+  const urls=[base+'speiseplan.csv?v='+Date.now(),'speiseplan.csv?v='+Date.now(),ghRaw].filter(Boolean);
   let text=null;
-  for(const url of urls){
-    try{
-      const r=await fetch(url);
-      if(r.ok){text=await r.text();break;}
-    }catch{}
-  }
-
+  for(const url of urls){try{const r=await fetch(url);if(r.ok){text=await r.text();break;}}catch{}}
   if(!text){
     renderMascot('');
     document.getElementById('emptyState').style.display='block';
-    document.getElementById('emptyState').innerHTML=`
-      <div class="big">🍽️</div>
-      <p>Noch kein Speiseplan gefunden.<br><br>
-      Bitte auf dem PC <a href="erstellen.html">erstellen.html</a> öffnen,<br>
-      einen Plan generieren und auf <strong>☁️ Direkt zu GitHub</strong> klicken.<br><br>
-      <span style="font-size:.8rem;color:var(--light-text)">Danach bitte 1–2 Minuten warten bis GitHub Pages aktualisiert ist.</span></p>`;
-    setLoading(false);
-    return;
+    document.getElementById('emptyState').innerHTML=`<div class="big">🍽️</div><p>Noch kein Speiseplan gefunden.<br><br>Bitte auf dem PC <a href="erstellen.html">erstellen.html</a> öffnen,<br>einen Plan generieren und auf <strong>☁️ Direkt zu GitHub</strong> klicken.<br><br><span style="font-size:.8rem;color:var(--light-text)">Danach bitte 1–2 Minuten warten.</span></p>`;
+    setLoading(false);return;
   }
-
+  CURRENT_CSV_TEXT=text;
   const{plan,weekKey,prefs}=parseCSV(text);
+  CURRENT_PLAN=plan;CURRENT_WEEKKEY=weekKey;
   renderMascot(weekKey);
   renderPlan(plan,weekKey);
-  if(prefs.liked.length){
-    document.getElementById('weekSub').textContent=`👍 Lieblingsgerichte: ${prefs.liked.slice(-4).join(', ')}`;
-  }
+  if(prefs.liked.length)document.getElementById('weekSub').textContent=`👍 Lieblingsgerichte: ${prefs.liked.slice(-4).join(', ')}`;
+  if(!GH.token)setTimeout(()=>showToast('Tipp: ⚙️ GitHub-Daten eingeben zum Bewertungen speichern','info'),1500);
   setLoading(false);
 }
 
+// ── Settings events ──
+document.getElementById('settingsBtn').addEventListener('click',()=>{
+  document.getElementById('ghTokenInput').value=GH.token;
+  document.getElementById('ghUserInput').value=GH.user;
+  document.getElementById('ghRepoInput').value=GH.repo;
+  document.getElementById('settingsOverlay').classList.add('open');
+});
+document.getElementById('settingsOverlay').addEventListener('click',e=>{if(e.target===document.getElementById('settingsOverlay'))document.getElementById('settingsOverlay').classList.remove('open');});
+document.getElementById('saveSettingsBtn').addEventListener('click',()=>{
+  GH.token=document.getElementById('ghTokenInput').value.trim();
+  GH.user=document.getElementById('ghUserInput').value.trim();
+  GH.repo=document.getElementById('ghRepoInput').value.trim();
+  localStorage.setItem('sp_ghtoken',GH.token);
+  localStorage.setItem('sp_ghuser',GH.user);
+  localStorage.setItem('sp_ghrepo',GH.repo);
+  document.getElementById('settingsOverlay').classList.remove('open');
+  showToast('Gespeichert ✓ – Bewertungen werden jetzt in GitHub gesichert','success');
+});
+document.getElementById('refreshBtn').addEventListener('click',loadCSV);
+
 // ── Init ──
 async function init(){
-  // Open today's accordion on mobile
+  loadGhSettings();
   if(window.innerWidth<760){
-    const today=new Date().getDay();
-    const idx=today===0?6:today-1;
+    const today=new Date().getDay();const idx=today===0?6:today-1;
     setTimeout(()=>document.getElementById(`acc_${DAYS[idx]}`)?.classList.add('open'),400);
   }
   await loadCSV();
 }
-
 init();
 </script>
 </body>
