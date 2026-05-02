@@ -483,9 +483,13 @@ async function pushToGitHub(){
   if(!STATE.ghToken||!STATE.ghUser||!STATE.ghRepo){openSettings();showToast('Bitte GitHub-Daten in ⚙️ eintragen','info');return;}
   setGhStatus('busy');
   document.getElementById('exportBtn').disabled=true;
+  const csv=buildCSV();
   try{
-    await ghPut('speiseplan.csv',buildCSV(),'Speiseplan aktualisiert 🌱');
-    // Also push current vorlieben
+    // Save week-specific file: plaene/2026-W18.csv
+    await ghPut(`plaene/${STATE.weekKey}.csv`,csv,`Speiseplan ${STATE.weekKey} gespeichert 🌱`);
+    // Also update speiseplan.csv as the "current" fallback
+    await ghPut('speiseplan.csv',csv,'Aktueller Speiseplan aktualisiert 🌱');
+    // Push vorlieben
     await pushVorlieben();
     setGhStatus('ok');
     showToast('✅ In GitHub gespeichert! index.html in ~1 Min aktuell 🎉','success');

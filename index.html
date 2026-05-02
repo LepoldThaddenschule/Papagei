@@ -24,7 +24,10 @@ h1{font-family:'Cormorant Garamond',serif;font-size:clamp(1.9rem,5vw,3.2rem);fon
 h1 em{color:var(--dusty-rose);font-style:italic;}
 .subtitle{font-size:.75rem;color:var(--light-text);margin-top:.2rem;letter-spacing:.14em;text-transform:uppercase;}
 
-/* MASCOT */
+.nav-btn{width:36px;height:36px;border-radius:50%;border:1.5px solid var(--border);background:var(--card);cursor:pointer;font-size:1.1rem;font-weight:700;color:var(--mid-text);display:flex;align-items:center;justify-content:center;transition:all .2s;box-shadow:var(--shadow);}
+.nav-btn:hover{background:var(--lavender);color:var(--warm-text);}
+.nav-btn:disabled{opacity:.3;cursor:not-allowed;}
+
 .mascot-section{display:flex;flex-direction:column;align-items:center;gap:.5rem;padding:.6rem 1rem 1rem;}
 .mascot-wrap{width:110px;height:110px;filter:drop-shadow(0 5px 14px rgba(180,130,165,.22));}
 .mascot-msg{font-size:.82rem;color:var(--mid-text);font-style:italic;text-align:center;max-width:240px;line-height:1.5;}
@@ -159,7 +162,11 @@ h1 em{color:var(--dusty-rose);font-style:italic;}
 </div>
 
 <div class="week-info">
-  <div class="week-badge" id="weekLabel">Lade Plan…</div>
+  <div style="display:flex;align-items:center;justify-content:center;gap:.7rem;flex-wrap:wrap;">
+    <button class="nav-btn" id="prevWeekBtn">‹</button>
+    <div class="week-badge" id="weekLabel">Lade Plan…</div>
+    <button class="nav-btn" id="nextWeekBtn">›</button>
+  </div>
   <div class="week-sub" id="weekSub"></div>
 </div>
 
@@ -358,11 +365,9 @@ function weekLabelFromKey(k){
 // ── Render Plan ──
 function renderPlan(plan,weekKey){
   document.getElementById('weekLabel').textContent=weekLabelFromKey(weekKey)||'Aktueller Plan';
-  const hasMeals=DAYS.some(d=>MEALS.some(m=>plan[d]?.[m]?.name));
+  const hasMeals=DAYS.some(d=>mealsForDay(d).some(m=>plan[d]?.[m]?.name));
   document.getElementById('emptyState').style.display=hasMeals?'none':'block';
-  if(!hasMeals)return;
-  renderDesktop(plan);
-  renderMobile(plan);
+  if(hasMeals){renderDesktop(plan);renderMobile(plan);}
 }
 
 function renderDesktop(plan){
@@ -519,44 +524,90 @@ async function pushVorlieben(liked,disliked){
 }
 
 
-async function pushCSV(csv){
-  const content=btoa(unescape(encodeURIComponent(csv)));
-  const apiUrl=`https://api.github.com/repos/${GH.user}/${GH.repo}/contents/speiseplan.csv`;
-  let sha='';
-  try{const c=await fetch(apiUrl,{headers:{'Authorization':'token '+GH.token,'Accept':'application/vnd.github.v3+json'}});if(c.ok){const d=await c.json();sha=d.sha||'';}}catch{}
-  const body={message:'Bewertungen aktualisiert 🌱',content};if(sha)body.sha=sha;
-  const r=await fetch(apiUrl,{method:'PUT',headers:{'Authorization':'token '+GH.token,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'},body:JSON.stringify(body)});
-  if(!r.ok){const err=await r.json();throw new Error(err.message||r.status);}
+async function pushCSV(csv,weekKey){
+  if(weekKey)await ghPut(`plaene/${weekKey}.csv`,csv,'Bewertungen aktualisiert 🌱');
+  await ghPut('speiseplan.csv',csv,'Bewertungen aktualisiert 🌱');
 }
 
-// ── Load CSV ──
-async function loadCSV(){
+// ── Week helpers ──
+function getISOWeek(d){const t=new Date(d);t.setHours(0,0,0,0);t.setDate(t.getDate()+3-(t.getDay()+6)%7);const w=new Date(t.getFullYear(),0,4);return 1+Math.round(((t-w)/86400000-3+(w.getDay()+6)%7)/7);}
+function curWeekKey(){const n=new Date();return `${n.getFullYear()}-W${String(getISOWeek(n)).padStart(2,'0')}`;}
+function shiftWk(k,d){const[yr,wS]=k.split('-W');let w=parseInt(wS),y=parseInt(yr);w+=d;if(w<1){y--;w=52;}if(w>52){y++;w=1;}return `${y}-W${String(w).padStart(2,'0')}`;}
+
+let CURRENT_WEEK_KEY='';
+
+// ── Load a specific week ──
+async function loadWeek(weekKey){
   setLoading(true);
+  document.getElementById('weekLabel').textContent=weekLabelFromKey(weekKey)||'Lade…';
+  document.getElementById('weekSub').textContent='';
+  document.getElementById('emptyState').style.display='none';
+  document.getElementById('mealGrid').innerHTML='';
+  document.getElementById('mealAccordion').innerHTML='';
+
   const loc=window.location;
   const base=loc.origin+loc.pathname.replace(/[^/]*$/,'');
-  const ghRaw=loc.hostname.endsWith('github.io')
-    ?'https://raw.githubusercontent.com/'+loc.hostname.replace('.github.io','')+loc.pathname.replace('index.html','')+'speiseplan.csv'
-    :null;
-  const urls=[base+'speiseplan.csv?v='+Date.now(),'speiseplan.csv?v='+Date.now(),ghRaw].filter(Boolean);
+  const isGhPages=loc.hostname.endsWith('github.io');
+  const ghOwner=isGhPages?loc.hostname.replace('.github.io',''):'';
+  const ghRepo=GH.repo||(isGhPages?loc.pathname.split('/').filter(Boolean)[0]:'');
+
+  const urls=[
+    `${base}plaene/${weekKey}.csv?v=`+Date.now(),
+    isGhPages?`https://raw.githubusercontent.com/${ghOwner}/${ghRepo}/main/plaene/${weekKey}.csv?v=`+Date.now():null,
+    weekKey===curWeekKey()?`${base}speiseplan.csv?v=`+Date.now():null,
+    weekKey===curWeekKey()&&isGhPages?`https://raw.githubusercontent.com/${ghOwner}/${ghRepo}/main/speiseplan.csv?v=`+Date.now():null,
+  ].filter(Boolean);
+
   let text=null;
   for(const url of urls){try{const r=await fetch(url);if(r.ok){text=await r.text();break;}}catch{}}
+
   if(!text){
-    renderMascot('');
+    renderMascot(weekKey);
     document.getElementById('emptyState').style.display='block';
-    document.getElementById('emptyState').innerHTML=`<div class="big">🍽️</div><p>Noch kein Speiseplan gefunden.<br><br>Bitte auf dem PC <a href="erstellen.html">erstellen.html</a> öffnen,<br>einen Plan generieren und auf <strong>☁️ Direkt zu GitHub</strong> klicken.<br><br><span style="font-size:.8rem;color:var(--light-text)">Danach bitte 1–2 Minuten warten.</span></p>`;
-    setLoading(false);return;
+    document.getElementById('emptyState').innerHTML=`<div class="big">📭</div><p>Für diese Woche gibt es noch keinen Speiseplan.<br><br><span style="font-size:.8rem;color:var(--light-text)">Auf dem PC <a href="erstellen.html">erstellen.html</a> öffnen und Plan erstellen.</span></p>`;
+    CURRENT_PLAN={};CURRENT_WEEKKEY=weekKey;CURRENT_CSV_TEXT='';
+    setLoading(false);updateNavButtons();return;
   }
+
   CURRENT_CSV_TEXT=text;
-  const{plan,weekKey,prefs}=parseCSV(text);
-  CURRENT_PLAN=plan;CURRENT_WEEKKEY=weekKey;
-  renderMascot(weekKey);
-  renderPlan(plan,weekKey);
-  if(prefs.liked.length)document.getElementById('weekSub').textContent=`👍 Lieblingsgerichte: ${prefs.liked.slice(-4).join(', ')}`;
+  const{plan,weekKey:parsed}=parseCSV(text);
+  CURRENT_WEEKKEY=parsed||weekKey;
+  CURRENT_PLAN=plan;
+  renderMascot(CURRENT_WEEKKEY);
+  renderPlan(plan,CURRENT_WEEKKEY);
   if(!GH.token)setTimeout(()=>showToast('Tipp: ⚙️ GitHub-Daten eingeben zum Bewertungen speichern','info'),1500);
-  setLoading(false);
+  setLoading(false);updateNavButtons();
 }
 
-// ── Settings events ──
+function updateNavButtons(){
+  const next=document.getElementById('nextWeekBtn');
+  if(next)next.disabled=(CURRENT_WEEK_KEY>=curWeekKey());
+}
+
+// ── Rate ──
+async function rate(day,meal,newStatus){
+  if(!CURRENT_PLAN[day]?.[meal])return;
+  const e=CURRENT_PLAN[day][meal];
+  e.status=e.status===newStatus?'pending':newStatus;
+  renderPlan(CURRENT_PLAN,CURRENT_WEEKKEY);
+  if(!GH.token||!GH.user||!GH.repo){showToast('Tipp: ⚙️ GitHub-Daten eingeben um Bewertungen dauerhaft zu speichern','info');return;}
+  try{
+    await pushCSV(rebuildCSV(CURRENT_PLAN,CURRENT_WEEKKEY),CURRENT_WEEKKEY);
+    const vorlieben=await loadVorliebenFromGH()||{liked:[],disliked:[]};
+    const liked=new Set(vorlieben.liked||[]);
+    const disliked=new Set(vorlieben.disliked||[]);
+    DAYS.forEach(d=>mealsForDay(d).forEach(m=>{
+      const entry=CURRENT_PLAN[d]?.[m];
+      if(!entry?.name||m==='sport')return;
+      if(entry.status==='accepted'){liked.add(entry.name);disliked.delete(entry.name);}
+      else if(entry.status==='rejected'){disliked.add(entry.name);liked.delete(entry.name);}
+    }));
+    await pushVorlieben([...liked],[...disliked]);
+    showToast(e.status==='accepted'?'👍 Gemerkt!':e.status==='rejected'?'👎 Gemerkt!':'Bewertung entfernt','success');
+  }catch(err){showToast('Speichern fehlgeschlagen: '+err.message,'error');}
+}
+
+// ── Events ──
 document.getElementById('settingsBtn').addEventListener('click',()=>{
   document.getElementById('ghTokenInput').value=GH.token;
   document.getElementById('ghUserInput').value=GH.user;
@@ -568,22 +619,24 @@ document.getElementById('saveSettingsBtn').addEventListener('click',()=>{
   GH.token=document.getElementById('ghTokenInput').value.trim();
   GH.user=document.getElementById('ghUserInput').value.trim();
   GH.repo=document.getElementById('ghRepoInput').value.trim();
-  localStorage.setItem('sp_ghtoken',GH.token);
-  localStorage.setItem('sp_ghuser',GH.user);
-  localStorage.setItem('sp_ghrepo',GH.repo);
+  localStorage.setItem('sp_ghtoken',GH.token);localStorage.setItem('sp_ghuser',GH.user);localStorage.setItem('sp_ghrepo',GH.repo);
   document.getElementById('settingsOverlay').classList.remove('open');
-  showToast('Gespeichert ✓ – Bewertungen werden jetzt in GitHub gesichert','success');
+  showToast('Gespeichert ✓','success');
+  loadWeek(CURRENT_WEEK_KEY);
 });
-document.getElementById('refreshBtn').addEventListener('click',loadCSV);
+document.getElementById('refreshBtn').addEventListener('click',()=>loadWeek(CURRENT_WEEK_KEY));
+document.getElementById('prevWeekBtn').addEventListener('click',()=>{CURRENT_WEEK_KEY=shiftWk(CURRENT_WEEK_KEY,-1);loadWeek(CURRENT_WEEK_KEY);});
+document.getElementById('nextWeekBtn').addEventListener('click',()=>{
+  const next=shiftWk(CURRENT_WEEK_KEY,1);
+  if(next<=curWeekKey()){CURRENT_WEEK_KEY=next;loadWeek(CURRENT_WEEK_KEY);}
+});
 
 // ── Init ──
 async function init(){
   loadGhSettings();
-  if(window.innerWidth<760){
-    const today=new Date().getDay();const idx=today===0?6:today-1;
-    setTimeout(()=>document.getElementById(`acc_${DAYS[idx]}`)?.classList.add('open'),400);
-  }
-  await loadCSV();
+  CURRENT_WEEK_KEY=curWeekKey();
+  if(window.innerWidth<760){const today=new Date().getDay();const idx=today===0?6:today-1;setTimeout(()=>document.getElementById(`acc_${DAYS[idx]}`)?.classList.add('open'),400);}
+  await loadWeek(CURRENT_WEEK_KEY);
 }
 init();
 </script>
