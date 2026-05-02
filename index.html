@@ -450,14 +450,23 @@ async function rate(day,meal,newStatus){
   const e=CURRENT_PLAN[day][meal];
   e.status=e.status===newStatus?'pending':newStatus;
   renderPlan(CURRENT_PLAN,CURRENT_WEEKKEY);
-  // Update liked/disliked in prefs within CSV
   if(!GH.token||!GH.user||!GH.repo){
-    showToast('Tipp: ⚙️ GitHub-Daten eingeben um Bewertungen dauerhaft zu speichern','info');
-    return;
+    showToast('Tipp: ⚙️ GitHub-Daten eingeben um Bewertungen dauerhaft zu speichern','info');return;
   }
   try{
-    const csv=rebuildCSV(CURRENT_PLAN,CURRENT_WEEKKEY);
-    await pushCSV(csv);
+    // Save plan CSV
+    await pushCSV(rebuildCSV(CURRENT_PLAN,CURRENT_WEEKKEY));
+    // Build updated liked/disliked from all ratings in plan
+    const vorlieben=await loadVorliebenFromGH()||{liked:[],disliked:[]};
+    const liked=new Set(vorlieben.liked||[]);
+    const disliked=new Set(vorlieben.disliked||[]);
+    DAYS.forEach(d=>mealsForDay(d).forEach(m=>{
+      const entry=CURRENT_PLAN[d]?.[m];
+      if(!entry?.name||m==='sport')return;
+      if(entry.status==='accepted'){liked.add(entry.name);disliked.delete(entry.name);}
+      else if(entry.status==='rejected'){disliked.add(entry.name);liked.delete(entry.name);}
+    }));
+    await pushVorlieben([...liked],[...disliked]);
     showToast(e.status==='accepted'?'👍 Gemerkt!':e.status==='rejected'?'👎 Gemerkt!':'Bewertung entfernt','success');
   }catch(err){
     showToast('Speichern fehlgeschlagen: '+err.message,'error');
@@ -476,23 +485,39 @@ function rebuildCSV(plan,weekKey){
       csv+=`"${yr}-W${wS}","${day}","${DAY_LABELS[DAYS.indexOf(day)]}","${meal}","${mLabel}","${name}","${status}"\n`;
     });
   });
-  // Build accumulated liked/disliked:
-  // Start from existing prefs in the CSV, then apply current week's ratings on top
-  const{prefs:existingPrefs}=parseCSV(CURRENT_CSV_TEXT);
-  const liked=new Set(existingPrefs.liked||[]);
-  const disliked=new Set(existingPrefs.disliked||[]);
-  DAYS.forEach(d=>mealsForDay(d).forEach(m=>{
-    const e=plan[d]?.[m];if(!e?.name||e.name==='sport')return;
-    if(e.status==='accepted'){liked.add(e.name);disliked.delete(e.name);}
-    else if(e.status==='rejected'){disliked.add(e.name);liked.delete(e.name);}
-  }));
-  csv+='\n# Vorlieben\n';
-  csv+=`"liked","${[...liked].map(x=>x.replace(/"/g,'""')).join(';')}"\n`;
-  csv+=`"disliked","${[...disliked].map(x=>x.replace(/"/g,'""')).join(';')}"\n`;
-  // Keep original CSV text updated so subsequent ratings accumulate correctly
   CURRENT_CSV_TEXT=csv;
   return csv;
 }
+
+// ── vorlieben.json helpers ──
+async function ghPut(path,content,msg){
+  const url=`https://api.github.com/repos/${GH.user}/${GH.repo}/contents/${path}`;
+  let sha='';
+  try{const c=await fetch(url,{headers:{'Authorization':'token '+GH.token,'Accept':'application/vnd.github.v3+json'}});if(c.ok){const d=await c.json();sha=d.sha||'';}}catch{}
+  const body={message:msg,content:btoa(unescape(encodeURIComponent(content)))};if(sha)body.sha=sha;
+  const r=await fetch(url,{method:'PUT',headers:{'Authorization':'token '+GH.token,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'},body:JSON.stringify(body)});
+  if(!r.ok){const e=await r.json();throw new Error(e.message||r.status);}
+}
+
+async function loadVorliebenFromGH(){
+  if(!GH.token||!GH.user||!GH.repo)return null;
+  try{
+    const url=`https://api.github.com/repos/${GH.user}/${GH.repo}/contents/vorlieben.json`;
+    const r=await fetch(url,{headers:{'Authorization':'token '+GH.token,'Accept':'application/vnd.github.v3+json'}});
+    if(!r.ok)return null;
+    const d=await r.json();
+    return JSON.parse(decodeURIComponent(escape(atob(d.content.replace(/\n/g,'')))));
+  }catch{return null;}
+}
+
+async function pushVorlieben(liked,disliked){
+  if(!GH.token||!GH.user||!GH.repo)return;
+  try{
+    const json=JSON.stringify({liked,disliked,updated:new Date().toISOString()},null,2);
+    await ghPut('vorlieben.json',json,'Vorlieben aktualisiert 🌱');
+  }catch(e){console.warn('Vorlieben push failed:',e.message);}
+}
+
 
 async function pushCSV(csv){
   const content=btoa(unescape(encodeURIComponent(csv)));

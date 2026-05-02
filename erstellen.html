@@ -39,12 +39,7 @@ h1 em{color:var(--dusty-rose);font-style:italic;}
 .btn-save{background:linear-gradient(135deg,#A8D8A8,#7EC878);color:white;box-shadow:0 4px 14px rgba(120,200,120,.3);}
 .btn-save:hover{transform:translateY(-2px);}
 
-/* PREFS BAR */
-.prefs-bar{max-width:1200px;margin:0 auto;padding:0 1.5rem .8rem;display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;}
-.prefs-lbl{font-size:.7rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--light-text);}
-.chip{font-size:.68rem;padding:.2rem .6rem;border-radius:10px;font-weight:600;}
-.chip.like{background:var(--mint);color:#3A6040;}
-.chip.dislike{background:var(--blush);color:#8A3050;}
+/* PREFS BAR - removed, prefs stored in vorlieben.json */
 
 /* GRID */
 .plan-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:.6rem;padding:0 1.2rem 1.5rem;max-width:1400px;margin:0 auto;}
@@ -144,7 +139,6 @@ h1 em{color:var(--dusty-rose);font-style:italic;}
   <button class="btn btn-save" id="exportBtn">☁️ Direkt zu GitHub<span class="gh-status" id="ghStatus"></span></button>
 </div>
 
-<div class="prefs-bar" id="prefsBar"></div>
 <div class="plan-grid" id="planGrid"></div>
 <div class="info-bar">
   Auf dem Handy: <a href="index.html">→ index.html öffnen</a>
@@ -257,8 +251,9 @@ function load(){
 // ── Render ──
 function renderAll(){
   document.getElementById('weekLabel').textContent=weekLabel(STATE.weekKey);
-  renderGrid();renderPrefsBar();
+  renderGrid();
 }
+
 
 function renderGrid(){
   const g=document.getElementById('planGrid');g.innerHTML='';
@@ -289,16 +284,6 @@ function renderGrid(){
   });
 }
 
-function renderPrefsBar(){
-  const bar=document.getElementById('prefsBar');
-  const{liked,disliked}=STATE.prefs;
-  if(!liked.length&&!disliked.length){bar.innerHTML='';return;}
-  let h='<span class="prefs-lbl">Vorlieben:</span>';
-  liked.slice(-10).forEach(m=>h+=`<span class="chip like">👍 ${m}</span>`);
-  disliked.slice(-10).forEach(m=>h+=`<span class="chip dislike">👎 ${m}</span>`);
-  bar.innerHTML=h;
-}
-
 function updateText(day,meal,text){
   if(!STATE.plan[day])STATE.plan[day]={};
   if(!STATE.plan[day][meal])STATE.plan[day][meal]={status:'pending'};
@@ -312,9 +297,16 @@ function setStatus(day,meal,status){
   const cur=e.status;
   e.status=cur===status?'pending':status;
   const n=e.name;
-  if(e.status==='accepted'&&n&&!STATE.prefs.liked.includes(n)){STATE.prefs.liked.push(n);STATE.prefs.disliked=STATE.prefs.disliked.filter(x=>x!==n);}
-  else if(e.status==='rejected'&&n&&!STATE.prefs.disliked.includes(n)){STATE.prefs.disliked.push(n);STATE.prefs.liked=STATE.prefs.liked.filter(x=>x!==n);}
+  if(e.status==='accepted'&&n){
+    if(!STATE.prefs.liked.includes(n))STATE.prefs.liked.push(n);
+    STATE.prefs.disliked=STATE.prefs.disliked.filter(x=>x!==n);
+  } else if(e.status==='rejected'&&n){
+    if(!STATE.prefs.disliked.includes(n))STATE.prefs.disliked.push(n);
+    STATE.prefs.liked=STATE.prefs.liked.filter(x=>x!==n);
+  }
   save();renderAll();
+  // Push vorlieben to GitHub in background
+  pushVorlieben();
 }
 
 // ── Claude API ──
@@ -331,6 +323,10 @@ async function generateWeek(){
   if(!STATE.apiKey){openSettings();showToast('Bitte zuerst Claude API-Key eingeben 🔑','info');return;}
   setLoading(true,'Claude erstellt deinen Wochenplan…');
   const p=STATE.prefs;
+  const lastWeekMeals=getLastWeekMeals();
+  const lastWeekStr=lastWeekMeals.length
+    ?`\nGerichte der LETZTEN WOCHE (maximal 2–3 dürfen wiederholt werden, der Rest muss NEU sein): ${lastWeekMeals.join(', ')}`
+    :'';
   const sys=`Du bist ein freundlicher vegetarischer Ernährungsberater und Fitness-Coach. Erstelle einen ausgewogenen, kalorienreduzierten, VOLLSTÄNDIG VEGETARISCHEN Wochenspeiseplan auf Deutsch.
 Regeln:
 - KEIN Fleisch, KEIN Fisch – alles vegetarisch
@@ -338,8 +334,9 @@ Regeln:
 - Kein Frühstück – der Tag beginnt mit dem Mittagessen
 - Nachmittagssnack NUR samstags und sonntags (mit Mengenangabe)
 - Sport an Mo/Mi/Fr/Sa/So: konkrete 10–15 Min Aktivität, z.B. "15 Min Yoga: Sonnengruß 3×" oder "10 Min flottes Spazierengehen"
-${p.liked.length?`Gemochte Gerichte (öfter in diese Richtung): ${p.liked.slice(-20).join(', ')}`:''}
-${p.disliked.length?`ABGELEHNTE Gerichte (niemals vorschlagen): ${p.disliked.slice(-20).join(', ')}`:''}
+- WICHTIG: Maximal 2–3 Gerichte dürfen identisch zur Vorwoche sein. Die große Mehrheit muss neue, andere Gerichte sein!${lastWeekStr}
+${p.liked.length?`Gemochte Gerichte – öfter ähnliches vorschlagen: ${p.liked.slice(-25).join(', ')}`:''}
+${p.disliked.length?`ABGELEHNTE Gerichte – niemals vorschlagen: ${p.disliked.slice(-25).join(', ')}`:''}
 ${p.notes?`Weitere Hinweise: ${p.notes}`:''}
 Antworte NUR mit validem JSON, kein Markdown.
 {"montag":{"mittagessen":"...","abendessen":"...","sport":"..."},"dienstag":{"mittagessen":"...","abendessen":"..."},"mittwoch":{"mittagessen":"...","abendessen":"...","sport":"..."},"donnerstag":{"mittagessen":"...","abendessen":"..."},"freitag":{"mittagessen":"...","abendessen":"...","sport":"..."},"samstag":{"mittagessen":"...","snack":"...","abendessen":"...","sport":"..."},"sonntag":{"mittagessen":"...","snack":"...","abendessen":"...","sport":"..."}}`;
@@ -408,7 +405,7 @@ function saveEdit(){
   save();renderAll();closeEdit();showToast('Gespeichert ✓','success');
 }
 
-// ── Build CSV ──
+// ── Build CSV (no prefs – stored separately in vorlieben.json) ──
 function buildCSV(){
   const wNum=STATE.weekKey.split('-W')[1];
   const yr=STATE.weekKey.split('-W')[0];
@@ -421,10 +418,61 @@ function buildCSV(){
       csv+=`"${yr}-W${wNum}","${day}","${DAY_LABELS[di]}","${meal}","${mealName(meal)}","${name}","${status}"\n`;
     });
   });
-  csv+='\n# Vorlieben\n';
-  csv+=`"liked","${STATE.prefs.liked.map(x=>x.replace(/"/g,'""')).join(';')}"\n`;
-  csv+=`"disliked","${STATE.prefs.disliked.map(x=>x.replace(/"/g,'""')).join(';')}"\n`;
   return csv;
+}
+
+// ── GitHub helper ──
+async function ghGetSHA(url){
+  try{const r=await fetch(url,{headers:{'Authorization':'token '+STATE.ghToken,'Accept':'application/vnd.github.v3+json'}});if(r.ok){const d=await r.json();return d.sha||'';}return '';}catch{return '';}
+}
+async function ghPut(path,content,message){
+  const url=`https://api.github.com/repos/${STATE.ghUser}/${STATE.ghRepo}/contents/${path}`;
+  const sha=await ghGetSHA(url);
+  const body={message,content:btoa(unescape(encodeURIComponent(content)))};
+  if(sha)body.sha=sha;
+  const r=await fetch(url,{method:'PUT',headers:{'Authorization':'token '+STATE.ghToken,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'},body:JSON.stringify(body)});
+  if(!r.ok){const e=await r.json();throw new Error(e.message||r.status);}
+}
+async function ghGetJSON(path){
+  try{
+    const url=`https://api.github.com/repos/${STATE.ghUser}/${STATE.ghRepo}/contents/${path}`;
+    const r=await fetch(url,{headers:{'Authorization':'token '+STATE.ghToken,'Accept':'application/vnd.github.v3+json'}});
+    if(!r.ok)return null;
+    const d=await r.json();
+    return JSON.parse(decodeURIComponent(escape(atob(d.content.replace(/\n/g,'')))));
+  }catch{return null;}
+}
+
+// ── vorlieben.json: push and load ──
+async function pushVorlieben(){
+  if(!STATE.ghToken||!STATE.ghUser||!STATE.ghRepo)return;
+  try{
+    const json=JSON.stringify({liked:STATE.prefs.liked,disliked:STATE.prefs.disliked,notes:STATE.prefs.notes,updated:new Date().toISOString()},null,2);
+    await ghPut('vorlieben.json',json,'Vorlieben aktualisiert 🌱');
+  }catch(e){console.warn('Vorlieben push failed:',e.message);}
+}
+
+async function loadVorlieben(){
+  if(!STATE.ghToken||!STATE.ghUser||!STATE.ghRepo)return;
+  const data=await ghGetJSON('vorlieben.json');
+  if(data){
+    STATE.prefs.liked=data.liked||[];
+    STATE.prefs.disliked=data.disliked||[];
+    if(data.notes)STATE.prefs.notes=data.notes;
+    localStorage.setItem('sp_prefs',JSON.stringify(STATE.prefs));
+    showToast('Vorlieben aus GitHub geladen ✓','success');
+  }
+}
+
+// ── Get last week's meals for overlap check ──
+function getLastWeekMeals(){
+  const lastKey=shiftWeek(STATE.weekKey,-1);
+  try{
+    const lastPlan=JSON.parse(localStorage.getItem('sp_plan_'+lastKey))||{};
+    const meals=[];
+    DAYS.forEach(d=>Object.values(lastPlan[d]||{}).forEach(e=>{if(e?.name&&!['sport'].includes(e.name))meals.push(e.name);}));
+    return meals;
+  }catch{return[];}
 }
 
 // ── Push to GitHub ──
@@ -432,33 +480,18 @@ function setGhStatus(s){const d=document.getElementById('ghStatus');if(d)d.class
 async function pushToGitHub(){
   const hasData=DAYS.some(d=>mealsForDay(d).some(m=>STATE.plan[d]?.[m]?.name));
   if(!hasData){showToast('Erst einen Speiseplan erstellen! ✨','info');return;}
-  if(!STATE.ghToken||!STATE.ghUser||!STATE.ghRepo){
-    openSettings();showToast('Bitte GitHub-Daten in ⚙️ eintragen','info');return;
-  }
+  if(!STATE.ghToken||!STATE.ghUser||!STATE.ghRepo){openSettings();showToast('Bitte GitHub-Daten in ⚙️ eintragen','info');return;}
   setGhStatus('busy');
   document.getElementById('exportBtn').disabled=true;
-  const csv=buildCSV();
-  const content=btoa(unescape(encodeURIComponent(csv)));
-  const apiUrl=`https://api.github.com/repos/${STATE.ghUser}/${STATE.ghRepo}/contents/speiseplan.csv`;
   try{
-    let sha='';
-    try{
-      const check=await fetch(apiUrl,{headers:{'Authorization':'token '+STATE.ghToken,'Accept':'application/vnd.github.v3+json'}});
-      if(check.ok){const d=await check.json();sha=d.sha||'';}
-    }catch{}
-    const body={message:'Speiseplan aktualisiert 🌱',content};
-    if(sha)body.sha=sha;
-    const r=await fetch(apiUrl,{
-      method:'PUT',
-      headers:{'Authorization':'token '+STATE.ghToken,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'},
-      body:JSON.stringify(body)
-    });
-    if(!r.ok){const err=await r.json();throw new Error(err.message||r.status);}
+    await ghPut('speiseplan.csv',buildCSV(),'Speiseplan aktualisiert 🌱');
+    // Also push current vorlieben
+    await pushVorlieben();
     setGhStatus('ok');
-    showToast('✅ Erfolgreich in GitHub gespeichert! index.html in ~1 Min aktuell 🎉','success');
+    showToast('✅ In GitHub gespeichert! index.html in ~1 Min aktuell 🎉','success');
   }catch(e){
     setGhStatus('err');
-    showToast('❌ GitHub-Fehler: '+e.message+' – Token & Repo in ⚙️ prüfen','error');
+    showToast('❌ GitHub-Fehler: '+e.message+' – Token & Repo prüfen','error');
   }
   document.getElementById('exportBtn').disabled=false;
 }
@@ -511,53 +544,17 @@ document.getElementById('exportBtn').addEventListener('click',pushToGitHub);
 document.getElementById('prevBtn').addEventListener('click',()=>{STATE.weekKey=shiftWeek(STATE.weekKey,-1);load();renderAll();});
 document.getElementById('nextBtn').addEventListener('click',()=>{STATE.weekKey=shiftWeek(STATE.weekKey,1);load();renderAll();});
 
-// ── Load prefs from GitHub CSV ──
-async function loadPrefsFromGitHub(){
-  if(!STATE.ghToken||!STATE.ghUser||!STATE.ghRepo)return;
-  try{
-    const apiUrl=`https://api.github.com/repos/${STATE.ghUser}/${STATE.ghRepo}/contents/speiseplan.csv`;
-    const r=await fetch(apiUrl,{headers:{'Authorization':'token '+STATE.ghToken,'Accept':'application/vnd.github.v3+json'}});
-    if(!r.ok)return;
-    const d=await r.json();
-    const text=decodeURIComponent(escape(atob(d.content.replace(/\n/g,''))));
-    // Parse liked/disliked from CSV
-    const liked=[],disliked=[];
-    text.split('\n').forEach(line=>{
-      const row=line.replace(/^"|"$/g,'').split('","');
-      if(row[0]==='liked'&&row[1])liked.push(...row[1].split(';').filter(Boolean));
-      if(row[0]==='disliked'&&row[1])disliked.push(...row[1].split(';').filter(Boolean));
-    });
-    // Merge: GitHub is source of truth for liked/disliked
-    if(liked.length||disliked.length){
-      STATE.prefs.liked=[...new Set([...liked])];
-      STATE.prefs.disliked=[...new Set([...disliked])];
-      localStorage.setItem('sp_prefs',JSON.stringify(STATE.prefs));
-      renderPrefsBar();
-      showToast('Vorlieben aus GitHub geladen ✓','success');
-    }
-  }catch(e){/* silently fail */}
-}
-
-// ── Init ──
 function findMostRecentWeek(){
   const keys=[];
   for(let i=0;i<localStorage.length;i++){
     const k=localStorage.key(i);
     if(k&&k.startsWith('sp_plan_')){
       const wk=k.replace('sp_plan_','');
-      try{
-        const p=JSON.parse(localStorage.getItem(k));
-        const hasData=p&&Object.keys(p).some(d=>Object.keys(p[d]||{}).some(m=>p[d][m]?.name));
-        if(hasData)keys.push(wk);
-      }catch{}
+      try{const p=JSON.parse(localStorage.getItem(k));const hasData=p&&Object.keys(p).some(d=>Object.keys(p[d]||{}).some(m=>p[d][m]?.name));if(hasData)keys.push(wk);}catch{}
     }
   }
   if(!keys.length)return null;
-  keys.sort((a,b)=>{
-    const[ay,aw]=a.split('-W').map(Number);
-    const[by,bw]=b.split('-W').map(Number);
-    return(by*100+bw)-(ay*100+aw);
-  });
+  keys.sort((a,b)=>{const[ay,aw]=a.split('-W').map(Number);const[by,bw]=b.split('-W').map(Number);return(by*100+bw)-(ay*100+aw);});
   return keys[0];
 }
 
@@ -581,8 +578,7 @@ async function init(){
   renderAll();
   if(STATE.ghToken&&STATE.ghUser&&STATE.ghRepo){
     setGhStatus('ok');
-    // Load latest prefs from GitHub in background
-    await loadPrefsFromGitHub();
+    await loadVorlieben();
   }
   if(!STATE.apiKey)setTimeout(()=>showToast('Tipp: ⚙️ öffnen und API-Keys eingeben','info'),1400);
 }
